@@ -236,6 +236,19 @@ body.no-noise .app-noise { opacity: 0; }
   transition: .2s;
 }
 .status-pill:hover { background: #eaf2e7; }
+.status-pill.float-pill {
+  color: var(--coral-deep);
+  border-color: rgba(239, 120, 97, 0.35);
+  background: rgba(239, 120, 97, 0.08);
+  cursor: pointer;
+}
+.status-pill.float-pill:hover {
+  background: rgba(239, 120, 97, 0.15);
+  border-color: var(--coral);
+}
+.status-pill.float-pill span {
+  font-size: 13px;
+}
 .pulse-dot {
   width: 6px;
   height: 6px;
@@ -583,6 +596,16 @@ body.no-noise .app-noise { opacity: 0; }
 }
 .small-button:active {
   transform: translateY(1px);
+}
+.small-button.secondary {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--ink);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+.small-button.secondary:hover {
+  background: rgba(0, 0, 0, 0.1);
+  color: var(--ink);
+  transform: translateY(-1px);
 }
 .text-button {
   padding: 6px 0;

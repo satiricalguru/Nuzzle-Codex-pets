@@ -653,7 +653,208 @@ function setPetState(newState, durationMs = 2000) {
       heroArt.className = `pet-art state-idle${gifClass2}`;
       state.activePetState = 'idle';
       if (stateTag) stateTag.textContent = 'idle state';
+      updatePipWindow();
     }, durationMs);
+  }
+  updatePipWindow();
+}
+
+let pipWindowInstance = null;
+
+function updatePipWindow() {
+  if (!pipWindowInstance || pipWindowInstance.closed) {
+    pipWindowInstance = null;
+    return;
+  }
+  try {
+    const pet = PETS.find(p => p.id === state.selectedPetId) || PETS[0];
+    const art = pipWindowInstance.document.getElementById('pip-art');
+    const name = pipWindowInstance.document.getElementById('pip-name');
+    const quote = pipWindowInstance.document.getElementById('pip-quote');
+
+    if (art) {
+      art.style.backgroundImage = `url('${petUrl(pet)}')`;
+      const gifClass = pet.ext === 'gif' ? ' gif-pet' : '';
+      art.className = `pip-art state-${state.activePetState || 'idle'}${gifClass}`;
+    }
+    if (name) name.textContent = pet.name;
+    if (quote) quote.textContent = pet.quote;
+  } catch (err) {
+    console.warn('PiP update error:', err);
+  }
+}
+
+async function floatPetOnDesktop() {
+  if (pipWindowInstance && !pipWindowInstance.closed) {
+    pipWindowInstance.focus();
+    showToast('Companion is already floating on your desktop!');
+    return;
+  }
+
+  if ('documentPictureInPicture' in window) {
+    try {
+      const pip = await window.documentPictureInPicture.requestWindow({
+        width: 240,
+        height: 280
+      });
+      pipWindowInstance = pip;
+
+      [...document.styleSheets].forEach(styleSheet => {
+        try {
+          if (styleSheet.href) {
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = styleSheet.href;
+            pip.document.head.appendChild(link);
+          } else if (styleSheet.cssRules) {
+            const style = document.createElement('style');
+            [...styleSheet.cssRules].forEach(rule => {
+              style.appendChild(document.createTextNode(rule.cssText));
+            });
+            pip.document.head.appendChild(style);
+          }
+        } catch (e) {}
+      });
+
+      const fontLink = document.createElement('link');
+      fontLink.rel = 'stylesheet';
+      fontLink.href = 'https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap';
+      pip.document.head.appendChild(fontLink);
+
+      const pipStyle = document.createElement('style');
+      pipStyle.textContent = `
+        body {
+          margin: 0;
+          padding: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #fcfbf8;
+          overflow: hidden;
+          user-select: none;
+          font-family: 'DM Sans', sans-serif;
+        }
+        .pip-card {
+          width: 100%;
+          background: rgba(255,255,255,0.96);
+          border: 1px solid rgba(0,0,0,0.08);
+          border-radius: 18px;
+          padding: 12px 10px;
+          text-align: center;
+          box-shadow: 0 8px 24px rgba(77,47,30,0.1);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 4px;
+          position: relative;
+        }
+        .pip-art {
+          width: 110px;
+          height: 125px;
+          background-color: #f2ede5;
+          background-repeat: no-repeat;
+          background-size: 800% 900%;
+          border-radius: 45% 45% 39% 39%;
+          box-shadow: 0 8px 16px rgba(77,47,30,0.1);
+          cursor: pointer;
+          transition: transform 0.15s ease;
+        }
+        .pip-art:hover { transform: scale(1.05); }
+        .pip-art:active { transform: scale(0.95); }
+        .pip-art.gif-pet {
+          background-size: contain !important;
+          background-position: center center !important;
+        }
+        .pip-name {
+          font-family: 'Fraunces', serif;
+          font-size: 15px;
+          font-weight: 700;
+          color: #1f1d1a;
+          margin: 2px 0 0;
+        }
+        .pip-quote {
+          font-size: 10px;
+          font-style: italic;
+          color: #7c7267;
+          margin: 0 0 4px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          max-width: 200px;
+        }
+        .pip-btn-row {
+          display: flex;
+          gap: 6px;
+          margin-top: 2px;
+        }
+        .pip-pat-btn {
+          background: #ea5a47;
+          color: #fff;
+          border: none;
+          border-radius: 10px;
+          padding: 5px 12px;
+          font-size: 11px;
+          font-weight: 600;
+          cursor: pointer;
+        }
+        .pip-pat-btn:hover { background: #d94936; }
+        .pip-cycle-btn {
+          background: #f0eae2;
+          color: #1f1d1a;
+          border: none;
+          border-radius: 10px;
+          padding: 5px 8px;
+          font-size: 11px;
+          cursor: pointer;
+        }
+        .pip-cycle-btn:hover { background: #e5dec5; }
+      `;
+      pip.document.head.appendChild(pipStyle);
+
+      const pet = PETS.find(p => p.id === state.selectedPetId) || PETS[0];
+      pip.document.body.innerHTML = `
+        <div class="pip-card" id="pip-card">
+          <div class="pet-particles" id="pip-particles"></div>
+          <div class="pip-art state-${state.activePetState || 'idle'}${pet.ext === 'gif' ? ' gif-pet' : ''}" id="pip-art" style="${artStyle(pet)}" title="Click to pat!"></div>
+          <strong class="pip-name" id="pip-name">${pet.name}</strong>
+          <small class="pip-quote" id="pip-quote">${pet.quote}</small>
+          <div class="pip-btn-row">
+            <button class="pip-pat-btn" id="pip-pat-btn">♡ pat</button>
+            <button class="pip-cycle-btn" id="pip-cycle-btn" title="Next Companion">next ↻</button>
+          </div>
+        </div>
+      `;
+
+      const art = pip.document.getElementById('pip-art');
+      const patBtn = pip.document.getElementById('pip-pat-btn');
+      const cycleBtn = pip.document.getElementById('pip-cycle-btn');
+
+      if (art) art.addEventListener('click', () => patActivePet());
+      if (patBtn) patBtn.addEventListener('click', () => patActivePet());
+      if (cycleBtn) {
+        cycleBtn.addEventListener('click', () => {
+          const idx = PETS.findIndex(p => p.id === state.selectedPetId);
+          const nextIdx = (idx + 1) % PETS.length;
+          selectCompanion(PETS[nextIdx].id);
+        });
+      }
+
+      pip.addEventListener('pagehide', () => {
+        pipWindowInstance = null;
+      });
+
+      showToast(`Floating ${pet.name} on desktop! (Always On Top)`);
+      return;
+    } catch (err) {
+      console.warn('Document Picture-in-Picture error, falling back to popup window:', err);
+    }
+  }
+
+  const popup = window.open('/mini.html', 'NuzzleFloatingCompanion', 'width=280,height=360,resizable=yes,scrollbars=no,status=no,toolbar=no,menubar=no');
+  if (popup) {
+    showToast('Opened mini floating companion window!');
+  } else {
+    showToast('Pop-up blocked. Please allow pop-ups for localhost.');
   }
 }
 
@@ -704,6 +905,7 @@ function selectCompanion(petId) {
   setPetState('pat', 1500);
   createHeartBurst();
   playChime('pat');
+  updatePipWindow();
   showToast(`${pet.name} is now your active companion`);
 }
 
@@ -871,6 +1073,7 @@ const PALETTE_ACTIONS = [
   { id: 'view-library', category: 'Navigation', title: 'Browse Pet Library', icon: '✣', shortcut: '2', action: () => setView('library') },
   { id: 'view-agents', category: 'Navigation', title: 'Manage Agents & Integrations', icon: '⌘', shortcut: '3', action: () => setView('agents') },
   { id: 'view-settings', category: 'Navigation', title: 'Open Settings & Preferences', icon: '◌', shortcut: '4', action: () => setView('settings') },
+  { id: 'act-float', category: 'Desktop', title: 'Float Companion on Desktop (Always on Top)', icon: '❐', shortcut: 'F', action: () => floatPetOnDesktop() },
   { id: 'act-pat', category: 'Pet Actions', title: 'Pet Active Companion', icon: '♡', action: () => patActivePet() },
   { id: 'act-sim', category: 'Agent Actions', title: 'Simulate Agent Tool Call', icon: '⚡︎', action: () => simulateAgentEvent() },
   ...PETS.map(p => ({ id: `pet-${p.id}`, category: 'Switch Companion', title: `Switch Companion to ${p.name}`, icon: '✦', action: () => selectCompanion(p.id) }))
@@ -1057,6 +1260,9 @@ function simulateAgentEvent() {
 
 window.nuzzle = window.nuzzle || {};
 window.nuzzle.dispatchAgentEvent = dispatchAgentEvent;
+window.nuzzle.floatPetOnDesktop = floatPetOnDesktop;
+window.nuzzle.patActivePet = patActivePet;
+window.nuzzle.selectCompanion = selectCompanion;
 window.addEventListener('nuzzle:agent-event', event => dispatchAgentEvent(event.detail || {}));
 window.addEventListener('message', event => {
   if (event.source !== window || event.data?.source !== 'nuzzle-agent') return;
@@ -1091,6 +1297,12 @@ document.addEventListener('click', event => {
   // Toast triggers
   const toastTarget = event.target.closest('[data-toast]');
   if (toastTarget) showToast(toastTarget.dataset.toast);
+
+  // Float pet on desktop action
+  if (event.target.id === 'float-desktop-btn' || event.target.closest('#float-desktop-btn') || event.target.id === 'topbar-float-btn' || event.target.closest('#topbar-float-btn')) {
+    floatPetOnDesktop();
+    return;
+  }
 
   // Companion pet action
   if (event.target.id === 'pet-me-button' || event.target.closest('#hero-pet-art')) {

@@ -107,7 +107,20 @@ try:
         assert "Codex failed a test" in page.locator("#activity-list .activity-item").first.inner_text()
         assert "state-failed" in page.locator("#hero-pet-art").get_attribute("class")
 
-        # 10. Narrow viewport layout verification
+        # 10. Floating Desktop Overlay & Mini View Verification
+        print("Testing Floating Desktop Overlay & Mini Companion...")
+        page.get_by_role("button", name="Overview").click()
+        assert page.locator("#float-desktop-btn").is_visible()
+        assert page.locator("#topbar-float-btn").is_visible()
+
+        mini_page = browser.new_page(viewport={"width": 300, "height": 380})
+        mini_page.goto(f"http://127.0.0.1:{PORT}/mini.html", wait_until="networkidle")
+        assert mini_page.locator("#mini-art").is_visible()
+        assert mini_page.locator("#mini-pat-btn").is_visible()
+        mini_page.locator("#mini-pat-btn").click()
+        mini_page.close()
+
+        # 11. Narrow viewport layout verification
         mobile = browser.new_page(viewport={"width": 390, "height": 844}, device_scale_factor=1)
         mobile.goto(f"http://127.0.0.1:{PORT}", wait_until="networkidle")
         assert mobile.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth")
