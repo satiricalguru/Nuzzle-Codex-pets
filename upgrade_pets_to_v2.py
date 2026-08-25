@@ -103,25 +103,29 @@ def build_v2_atlas(src_path: Path) -> Image.Image:
     is_gif = src_path.suffix.lower() == ".gif"
     
     if is_gif:
-        # For GIF, place single frame into cells
+        # For GIF, fit single frame into cells
         neutral = extract_cell(src_img, 0, 0, src_cols=1, src_rows=1)
         right = neutral
         left = neutral.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
         
-        # Populate all 9 standard rows with the animation/frame
         for row in range(STANDARD_ROWS):
             for col in range(COLUMNS):
                 atlas.alpha_composite(neutral, (col * CELL_WIDTH, row * CELL_HEIGHT))
     else:
-        # Standard 8x9 atlas
-        for row in range(STANDARD_ROWS):
-            for col in range(COLUMNS):
-                c = extract_cell(src_img, row, col, src_cols=8, src_rows=9)
-                atlas.alpha_composite(c, (col * CELL_WIDTH, row * CELL_HEIGHT))
-                
-        neutral = extract_cell(src_img, 0, 0, src_cols=8, src_rows=9)
-        right = extract_cell(src_img, 1, 0, src_cols=8, src_rows=9)
-        left = extract_cell(src_img, 2, 0, src_cols=8, src_rows=9)
+        # Standard 8x9 atlas: if already 1536x1872, composite directly for pristine pixel art
+        if src_img.size == (ATLAS_WIDTH, STANDARD_ROWS * CELL_HEIGHT):
+            atlas.alpha_composite(src_img, (0, 0))
+            neutral = src_img.crop((0, 0, CELL_WIDTH, CELL_HEIGHT))
+            right = src_img.crop((0, CELL_HEIGHT, CELL_WIDTH, 2 * CELL_HEIGHT))
+            left = src_img.crop((0, 2 * CELL_HEIGHT, CELL_WIDTH, 3 * CELL_HEIGHT))
+        else:
+            for row in range(STANDARD_ROWS):
+                for col in range(COLUMNS):
+                    c = extract_cell(src_img, row, col, src_cols=8, src_rows=9)
+                    atlas.alpha_composite(c, (col * CELL_WIDTH, row * CELL_HEIGHT))
+            neutral = extract_cell(src_img, 0, 0, src_cols=8, src_rows=9)
+            right = extract_cell(src_img, 1, 0, src_cols=8, src_rows=9)
+            left = extract_cell(src_img, 2, 0, src_cols=8, src_rows=9)
         
         if not left.getbbox():
             left = right.transpose(Image.Transpose.FLIP_LEFT_RIGHT)

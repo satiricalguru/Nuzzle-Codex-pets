@@ -17,14 +17,14 @@ TMP_ANIME_PETS_DIR = Path("/tmp/codex-anime-pets/pets")
 
 # Pet catalog metadata
 PETS_DATA = [
-  {"id": "hu-tao", "name": "Hu Tao", "ext": "png", "desc": "Spirited pyro companion for Codex"},
-  {"id": "furina", "name": "Furina", "ext": "png", "desc": "Dramatic hydro companion for Codex"},
-  {"id": "raiden", "name": "Raiden", "ext": "png", "desc": "Focused electro companion for Codex"},
-  {"id": "ganyu", "name": "Ganyu", "ext": "png", "desc": "Gentle cryo companion for Codex"},
-  {"id": "klee", "name": "Klee", "ext": "png", "desc": "Spark Knight explosive companion for Codex"},
-  {"id": "anya", "name": "Anya", "ext": "png", "desc": "Waku waku telepathic companion for Codex"},
-  {"id": "aiko", "name": "Aiko", "ext": "png", "desc": "Curious anemo companion for Codex"},
-  {"id": "ayaka", "name": "Ayaka", "ext": "png", "desc": "Graceful cryo companion for Codex"},
+  {"id": "hu-tao", "name": "Hu Tao", "ext": "webp", "desc": "Spirited pyro companion for Codex"},
+  {"id": "furina", "name": "Furina", "ext": "webp", "desc": "Dramatic hydro companion for Codex"},
+  {"id": "raiden", "name": "Raiden", "ext": "webp", "desc": "Focused electro companion for Codex"},
+  {"id": "ganyu", "name": "Ganyu", "ext": "webp", "desc": "Gentle cryo companion for Codex"},
+  {"id": "klee", "name": "Klee", "ext": "webp", "desc": "Spark Knight explosive companion for Codex"},
+  {"id": "anya", "name": "Anya", "ext": "webp", "desc": "Waku waku telepathic companion for Codex"},
+  {"id": "aiko", "name": "Aiko", "ext": "webp", "desc": "Curious anemo companion for Codex"},
+  {"id": "ayaka", "name": "Ayaka", "ext": "webp", "desc": "Graceful cryo companion for Codex"},
   {"id": "baobao", "name": "Baobao", "ext": "webp", "desc": "Mystic spirit companion from Under One Person"},
   {"id": "chen", "name": "Chen", "ext": "webp", "desc": "Sword operator companion from Arknights"},
   {"id": "conan", "name": "Conan", "ext": "webp", "desc": "Keen detective companion for Codex"},
