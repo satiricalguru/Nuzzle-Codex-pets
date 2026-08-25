@@ -1,6 +1,6 @@
 <div align="center">
 
-  <img src="https://raw.githubusercontent.com/ChanceYu/CoPet/main/public/pet.png" alt="Nuzzle Logo" width="130" />
+  <img src="https://raw.githubusercontent.com/satiricalguru/Nuzzle-Codex-pets/main/public/nuzzle-logo.png" alt="Nuzzle Logo" width="160" />
 
   # 🐾 Nuzzle — Codex Pets
 

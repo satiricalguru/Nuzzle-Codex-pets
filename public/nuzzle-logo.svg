@@ -1,0 +1,72 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fdfbf7"/>
+      <stop offset="100%" stop-color="#f3ebe0"/>
+    </linearGradient>
+    <linearGradient id="coralGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ff8d75"/>
+      <stop offset="100%" stop-color="#ef7861"/>
+    </linearGradient>
+    <filter id="cardShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="16" stdDeviation="24" flood-color="#453727" flood-opacity="0.12"/>
+    </filter>
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#ef7861" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- Background App Icon Squircle -->
+  <rect x="32" y="32" width="448" height="448" rx="112" fill="url(#bgGrad)" stroke="#ded8ce" stroke-width="4" filter="url(#cardShadow)"/>
+
+  <!-- Subtle Inner Ring -->
+  <rect x="48" y="48" width="416" height="416" rx="96" fill="none" stroke="#ffffff" stroke-width="3" stroke-opacity="0.6"/>
+
+  <!-- Cute Companion Ears & Head Silhouette Motif -->
+  <g transform="translate(0, -10)">
+    <!-- Left Ear -->
+    <path d="M155 175 C135 125 180 85 215 130 Z" fill="#ef7861" opacity="0.9" />
+    <path d="M165 165 C152 135 182 108 205 135 Z" fill="#fdedeb" />
+
+    <!-- Right Ear -->
+    <path d="M357 175 C377 125 332 85 297 130 Z" fill="#ef7861" opacity="0.9" />
+    <path d="M347 165 C360 135 330 108 307 135 Z" fill="#fdedeb" />
+
+    <!-- Head Circle -->
+    <circle cx="256" cy="225" r="105" fill="#2a2825" filter="url(#cardShadow)"/>
+
+    <!-- Cute Companion Face Elements -->
+    <!-- Eyes -->
+    <circle cx="218" cy="210" r="14" fill="#ffffff"/>
+    <circle cx="294" cy="210" r="14" fill="#ffffff"/>
+    <circle cx="221" cy="208" r="8" fill="#ef7861"/>
+    <circle cx="297" cy="208" r="8" fill="#ef7861"/>
+    <circle cx="223" cy="205" r="3" fill="#ffffff"/>
+    <circle cx="299" cy="205" r="3" fill="#ffffff"/>
+
+    <!-- Blush Cheeks -->
+    <ellipse cx="195" cy="235" rx="14" ry="8" fill="#ef7861" opacity="0.5"/>
+    <ellipse cx="317" cy="235" rx="14" ry="8" fill="#ef7861" opacity="0.5"/>
+
+    <!-- Cute Smile & Nose -->
+    <polygon points="256,224 251,219 261,219" fill="#ef7861" />
+    <path d="M246 233 Q256 242 266 233" stroke="#ffffff" stroke-width="4" stroke-linecap="round" fill="none"/>
+
+    <!-- Companion Sparkle Crown -->
+    <path d="M256 95 L260 108 L273 112 L260 116 L256 129 L252 116 L239 112 L252 108 Z" fill="#e7bc55" filter="url(#softGlow)"/>
+  </g>
+
+  <!-- Nuzzle 3 Iconic Brand Bars Lockup -->
+  <g transform="translate(196, 335)">
+    <!-- Bar 1 (Coral) -->
+    <rect x="0" y="32" width="22" height="48" rx="11" fill="url(#coralGrad)" filter="url(#softGlow)"/>
+    <!-- Bar 2 (Ink) -->
+    <rect x="36" y="8" width="22" height="72" rx="11" fill="#2a2825"/>
+    <!-- Bar 3 (Yellow) -->
+    <rect x="72" y="20" width="22" height="60" rx="11" fill="#e7bc55"/>
+  </g>
+
+  <!-- Cute Sparkles -->
+  <path d="M375 320 L378 328 L386 331 L378 334 L375 342 L372 334 L364 331 L372 328 Z" fill="#ef7861" opacity="0.8"/>
+  <path d="M125 310 L127 316 L133 318 L127 320 L125 326 L123 320 L117 318 L123 316 Z" fill="#e7bc55" opacity="0.8"/>
+</svg>
