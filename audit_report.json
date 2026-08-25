@@ -208,7 +208,7 @@
     "copet-neo": {
       "name": "CoPet Neo",
       "id": "copet-neo",
-      "public_asset": "copet-neo.gif",
+      "public_asset": "copet-neo.webp",
       "transparency": true,
       "manifest_v2": true,
       "animation_rows_valid": 11,
@@ -217,7 +217,7 @@
     "copet-nia": {
       "name": "CoPet Nia",
       "id": "copet-nia",
-      "public_asset": "copet-nia.gif",
+      "public_asset": "copet-nia.webp",
       "transparency": true,
       "manifest_v2": true,
       "animation_rows_valid": 11,
@@ -226,7 +226,7 @@
     "copet-mecha": {
       "name": "CoPet Mecha",
       "id": "copet-mecha",
-      "public_asset": "copet-mecha.gif",
+      "public_asset": "copet-mecha.webp",
       "transparency": true,
       "manifest_v2": true,
       "animation_rows_valid": 11,
@@ -235,7 +235,7 @@
     "dj-fuzz": {
       "name": "DJ Fuzz",
       "id": "dj-fuzz",
-      "public_asset": "dj-fuzz.gif",
+      "public_asset": "dj-fuzz.webp",
       "transparency": true,
       "manifest_v2": true,
       "animation_rows_valid": 11,
@@ -244,7 +244,7 @@
     "dog": {
       "name": "Lucky Dog",
       "id": "dog",
-      "public_asset": "dog.gif",
+      "public_asset": "dog.webp",
       "transparency": true,
       "manifest_v2": true,
       "animation_rows_valid": 11,
@@ -253,7 +253,7 @@
     "dragon": {
       "name": "Azure Dragon",
       "id": "dragon",
-      "public_asset": "dragon.gif",
+      "public_asset": "dragon.webp",
       "transparency": true,
       "manifest_v2": true,
       "animation_rows_valid": 11,
@@ -262,7 +262,7 @@
     "duck": {
       "name": "Waddly Duck",
       "id": "duck",
-      "public_asset": "duck.gif",
+      "public_asset": "duck.webp",
       "transparency": true,
       "manifest_v2": true,
       "animation_rows_valid": 11,
@@ -271,7 +271,7 @@
     "goat": {
       "name": "Cloud Goat",
       "id": "goat",
-      "public_asset": "goat.gif",
+      "public_asset": "goat.webp",
       "transparency": true,
       "manifest_v2": true,
       "animation_rows_valid": 11,
@@ -280,7 +280,7 @@
     "goku": {
       "name": "Goku",
       "id": "goku",
-      "public_asset": "goku.gif",
+      "public_asset": "goku.webp",
       "transparency": true,
       "manifest_v2": true,
       "animation_rows_valid": 11,
@@ -289,7 +289,7 @@
     "horse": {
       "name": "Chestnut Horse",
       "id": "horse",
-      "public_asset": "horse.gif",
+      "public_asset": "horse.webp",
       "transparency": true,
       "manifest_v2": true,
       "animation_rows_valid": 11,
@@ -298,7 +298,7 @@
     "monkey": {
       "name": "Clever Monkey",
       "id": "monkey",
-      "public_asset": "monkey.gif",
+      "public_asset": "monkey.webp",
       "transparency": true,
       "manifest_v2": true,
       "animation_rows_valid": 11,
@@ -307,7 +307,7 @@
     "orange-cat": {
       "name": "Orange Cat",
       "id": "orange-cat",
-      "public_asset": "orange-cat.gif",
+      "public_asset": "orange-cat.webp",
       "transparency": true,
       "manifest_v2": true,
       "animation_rows_valid": 11,
@@ -316,7 +316,7 @@
     "ox": {
       "name": "Cream Ox",
       "id": "ox",
-      "public_asset": "ox.gif",
+      "public_asset": "ox.webp",
       "transparency": true,
       "manifest_v2": true,
       "animation_rows_valid": 11,
@@ -325,7 +325,7 @@
     "panda": {
       "name": "Panda",
       "id": "panda",
-      "public_asset": "panda.gif",
+      "public_asset": "panda.webp",
       "transparency": true,
       "manifest_v2": true,
       "animation_rows_valid": 11,
@@ -334,7 +334,7 @@
     "pig": {
       "name": "Blush Pig",
       "id": "pig",
-      "public_asset": "pig.gif",
+      "public_asset": "pig.webp",
       "transparency": true,
       "manifest_v2": true,
       "animation_rows_valid": 11,
@@ -343,7 +343,7 @@
     "rabbit": {
       "name": "White Rabbit",
       "id": "rabbit",
-      "public_asset": "rabbit.gif",
+      "public_asset": "rabbit.webp",
       "transparency": true,
       "manifest_v2": true,
       "animation_rows_valid": 11,
@@ -352,7 +352,7 @@
     "rat": {
       "name": "Pearl Rat",
       "id": "rat",
-      "public_asset": "rat.gif",
+      "public_asset": "rat.webp",
       "transparency": true,
       "manifest_v2": true,
       "animation_rows_valid": 11,
@@ -361,7 +361,7 @@
     "rooster": {
       "name": "Golden Rooster",
       "id": "rooster",
-      "public_asset": "rooster.gif",
+      "public_asset": "rooster.webp",
       "transparency": true,
       "manifest_v2": true,
       "animation_rows_valid": 11,
@@ -370,7 +370,7 @@
     "snake": {
       "name": "Jade Snake",
       "id": "snake",
-      "public_asset": "snake.gif",
+      "public_asset": "snake.webp",
       "transparency": true,
       "manifest_v2": true,
       "animation_rows_valid": 11,
@@ -379,7 +379,7 @@
     "tiger": {
       "name": "Fierce Tiger",
       "id": "tiger",
-      "public_asset": "tiger.gif",
+      "public_asset": "tiger.webp",
       "transparency": true,
       "manifest_v2": true,
       "animation_rows_valid": 11,

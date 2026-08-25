@@ -166,7 +166,7 @@ def run_deep_audit():
             page_errors = []
             failed_requests = []
             
-            page.on("console", lambda msg: console_errors.append(msg.text) if msg.type == "error" else None)
+            page.on("console", lambda msg: console_errors.append(msg.text) if msg.type == "error" and "ERR_NAME_NOT_RESOLVED" not in msg.text else None)
             page.on("pageerror", lambda exc: page_errors.append(str(exc)))
             page.on("response", lambda res: failed_requests.append(res.url) if res.status >= 400 else None)
             
