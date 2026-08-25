@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 generate_readme_assets.py — Generates custom, high-definition animated GIF banners
-and gallery posters for the Nuzzle README.md.
+and gallery posters for the Nuzzle README.md with perfect frame looping and smooth timing.
 """
 
 from pathlib import Path
@@ -15,17 +15,30 @@ ASSETS_DIR.mkdir(exist_ok=True)
 CELL_W = 192
 CELL_H = 208
 
-def get_frame(pet_id: str, row: int, col: int) -> Image.Image:
+# 24-frame loop aligns cleanly with 4, 6, and 8 frame animations
+TOTAL_FRAMES = 24
+FRAME_DURATION_MS = 220  # Smooth, relaxed, visible pacing
+
+def get_active_frame_indices(pet_id: str, row: int) -> list:
     src_file = PUBLIC_PETS_DIR / f"{pet_id}.webp"
     if not src_file.exists():
         raise FileNotFoundError(f"Missing {src_file}")
     img = Image.open(src_file).convert("RGBA")
+    active = []
+    for c in range(8):
+        cell = img.crop((c * CELL_W, row * CELL_H, (c + 1) * CELL_W, (row + 1) * CELL_H))
+        if cell.getbbox() is not None:
+            active.append(c)
+    return active if active else [0]
+
+def get_pet_frame(pet_id: str, row: int, col: int) -> Image.Image:
+    src_file = PUBLIC_PETS_DIR / f"{pet_id}.webp"
+    img = Image.open(src_file).convert("RGBA")
     return img.crop((col * CELL_W, row * CELL_H, (col + 1) * CELL_W, (row + 1) * CELL_H))
 
 def create_hero_animated_gif():
-    print("🎨 Creating assets/nuzzle-hero-animated.gif...")
+    print("🎨 Creating assets/nuzzle-hero-animated.gif (Smooth 24-frame loop, 220ms)...")
     
-    # 6 featured companions
     pets = [
         {"id": "anya", "name": "Anya", "tag": "Waku Waku", "row": 0, "color": "#f472b6"},
         {"id": "hu-tao", "name": "Hu Tao", "tag": "Pyro · Chaos", "row": 0, "color": "#ef4444"},
@@ -35,11 +48,14 @@ def create_hero_animated_gif():
         {"id": "dragon", "name": "Azure Dragon", "tag": "Mythic Beast", "row": 0, "color": "#4ade80"},
     ]
     
+    # Pre-calculate active frame lists for each pet so characters NEVER disappear
+    for pet in pets:
+        pet["active_cols"] = get_active_frame_indices(pet["id"], pet["row"])
+    
     width = 840
     height = 290
     frames = []
     
-    # Try loading a system font
     try:
         font_title = ImageFont.truetype("/System/Library/Fonts/SFProRounded.ttf", 15)
         font_name = ImageFont.truetype("/System/Library/Fonts/SFProRounded.ttf", 13)
@@ -51,43 +67,40 @@ def create_hero_animated_gif():
         font_tag = font_title
         font_status = font_title
 
-    # 8 animation frames
-    for frame_idx in range(8):
-        # Dark canvas
+    for frame_idx in range(TOTAL_FRAMES):
         base = Image.new("RGBA", (width, height), (15, 15, 18, 255))
         draw = ImageDraw.Draw(base)
         
-        # Rounded main card container
+        # Container
         card_rect = [12, 12, width - 12, height - 12]
         draw.rounded_rectangle(card_rect, radius=16, fill=(24, 24, 30, 255), outline=(45, 45, 58, 255), width=1)
         
-        # Header bar inside card
+        # Header bar
         draw.text((32, 24), "🐾 NUZZLE", fill=(250, 250, 250, 255), font=font_title)
         draw.text((115, 25), "· 42 AI Coding Companions", fill=(160, 160, 175, 255), font=font_status)
         
-        # Status badge top-right
+        # Status badge
         badge_rect = [width - 240, 22, width - 32, 42]
         draw.rounded_rectangle(badge_rect, radius=10, fill=(38, 38, 48, 255), outline=(60, 60, 75, 255), width=1)
         draw.ellipse([width - 230, 29, width - 222, 37], fill=(52, 211, 153, 255))
         draw.text((width - 214, 26), "Codex v2 · 16 Directions", fill=(220, 220, 230, 255), font=font_status)
         
-        # Divider line
         draw.line([28, 52, width - 28, 52], fill=(36, 36, 46, 255), width=1)
         
-        # Pedestals and Characters
         slot_width = (width - 48) // len(pets)
         for i, pet in enumerate(pets):
             center_x = 24 + i * slot_width + slot_width // 2
             
-            # Glowing ground shadow/pedestal
+            # Pedestal
             ped_w = 80
             ped_y = 205
             draw.ellipse([center_x - ped_w // 2, ped_y, center_x + ped_w // 2, ped_y + 14], fill=(32, 32, 42, 255), outline=(50, 50, 65, 255), width=1)
             
-            # Extract sprite frame
-            sprite = get_frame(pet["id"], pet["row"], frame_idx)
+            # Continuous valid frame cycling
+            active_cols = pet["active_cols"]
+            col = active_cols[frame_idx % len(active_cols)]
+            sprite = get_pet_frame(pet["id"], pet["row"], col)
             
-            # Scale sprite cleanly (130px height)
             bbox = sprite.getbbox()
             if bbox:
                 cropped = sprite.crop(bbox)
@@ -99,16 +112,12 @@ def create_hero_animated_gif():
                 pos_y = ped_y + 8 - target_h
                 base.alpha_composite(scaled, (pos_x, pos_y))
                 
-            # Name
             draw.text((center_x, 228), pet["name"], fill=(255, 255, 255, 255), font=font_name, anchor="mt")
-            # Subtitle / Tag
             draw.text((center_x, 246), pet["tag"], fill=(150, 150, 165, 255), font=font_tag, anchor="mt")
 
-        # Bottom subtle banner
         draw.line([28, 266, width - 28, 266], fill=(30, 30, 40, 255), width=1)
         draw.text((width // 2, 272), "✨ Real-time animations for prompts, tool calls, reviews & errors", fill=(120, 120, 135, 255), font=font_tag, anchor="mt")
         
-        # Convert to RGB with palette
         rgb_frame = base.convert("RGB")
         p_frame = rgb_frame.convert("P", palette=Image.Palette.ADAPTIVE, colors=256)
         frames.append(p_frame)
@@ -118,22 +127,24 @@ def create_hero_animated_gif():
         out_path,
         save_all=True,
         append_images=frames[1:],
-        duration=140,
+        duration=FRAME_DURATION_MS,
         loop=0,
         optimize=True
     )
-    print(f"  ✓ Saved {out_path} ({len(frames)} frames)")
+    print(f"  ✓ Saved {out_path} ({len(frames)} frames, {FRAME_DURATION_MS}ms duration)")
 
 def create_actions_animated_gif():
-    print("🎨 Creating assets/nuzzle-actions-animated.gif...")
+    print("🎨 Creating assets/nuzzle-actions-animated.gif (Smooth 24-frame loop, 220ms)...")
     
-    # 4 companions showing distinct lifecycle action states
     states = [
-        {"id": "ganyu", "name": "Ganyu", "state_label": "IDLE / WAITING", "row": 0, "sub": "Breathing & Blinking", "badge_color": "#38bdf8"},
-        {"id": "aiko", "name": "Aiko", "state_label": "PAT / WAVING", "row": 3, "sub": "Interaction Reaction", "badge_color": "#f472b6"},
-        {"id": "shinchan", "name": "Shinchan", "state_label": "RUNNING / TOOL", "row": 1, "sub": "Active Execution", "badge_color": "#fb923c"},
-        {"id": "regulus-star-antimony", "name": "Regulus", "state_label": "CODE REVIEW", "row": 8, "sub": "Summary & Complete", "badge_color": "#a78bfa"},
+        {"id": "ganyu", "name": "Ganyu", "state_label": "IDLE / WAITING", "row": 0, "sub": "Breathing & Blinking"},
+        {"id": "aiko", "name": "Aiko", "state_label": "PAT / WAVING", "row": 3, "sub": "Interaction Reaction"},
+        {"id": "shinchan", "name": "Shinchan", "state_label": "RUNNING / TOOL", "row": 1, "sub": "Active Execution"},
+        {"id": "regulus-star-antimony", "name": "Regulus", "state_label": "CODE REVIEW", "row": 8, "sub": "Summary & Complete"},
     ]
+    
+    for s in states:
+        s["active_cols"] = get_active_frame_indices(s["id"], s["row"])
     
     width = 840
     height = 240
@@ -148,7 +159,7 @@ def create_actions_animated_gif():
         font_state = font_title
         font_sub = font_title
 
-    for frame_idx in range(8):
+    for frame_idx in range(TOTAL_FRAMES):
         base = Image.new("RGBA", (width, height), (15, 15, 18, 255))
         draw = ImageDraw.Draw(base)
         
@@ -174,8 +185,11 @@ def create_actions_animated_gif():
             ped_y = 180
             draw.ellipse([center_x - ped_w // 2, ped_y, center_x + ped_w // 2, ped_y + 12], fill=(30, 30, 40, 255), outline=(48, 48, 60, 255), width=1)
             
-            # Sprite
-            sprite = get_frame(s["id"], s["row"], frame_idx)
+            # Continuous valid frame cycling
+            active_cols = s["active_cols"]
+            col = active_cols[frame_idx % len(active_cols)]
+            sprite = get_pet_frame(s["id"], s["row"], col)
+            
             bbox = sprite.getbbox()
             if bbox:
                 cropped = sprite.crop(bbox)
@@ -186,7 +200,6 @@ def create_actions_animated_gif():
                 pos_y = ped_y + 6 - target_h
                 base.alpha_composite(scaled, (pos_x, pos_y))
                 
-            # Details
             draw.text((center_x, 196), f"{s['name']} · {s['sub']}", fill=(160, 160, 175, 255), font=font_sub, anchor="mt")
             
         rgb_frame = base.convert("RGB")
@@ -198,16 +211,15 @@ def create_actions_animated_gif():
         out_path,
         save_all=True,
         append_images=frames[1:],
-        duration=140,
+        duration=FRAME_DURATION_MS,
         loop=0,
         optimize=True
     )
-    print(f"  ✓ Saved {out_path} ({len(frames)} frames)")
+    print(f"  ✓ Saved {out_path} ({len(frames)} frames, {FRAME_DURATION_MS}ms duration)")
 
 def create_catalog_poster():
     print("🎨 Creating assets/nuzzle-catalog-poster.png...")
     
-    # 12 diverse companions
     pets = [
         {"id": "hu-tao", "name": "Hu Tao", "sub": "Pyro · Chaos"},
         {"id": "furina", "name": "Furina", "sub": "Hydro · Drama"},
@@ -262,11 +274,9 @@ def create_catalog_poster():
         box_w = col_w - 8
         box_h = row_h - 10
         
-        # Character card
         draw.rounded_rectangle([box_x, box_y, box_x + box_w, box_y + box_h], radius=12, fill=(28, 28, 36, 255), outline=(48, 48, 62, 255), width=1)
         
-        # Sprite
-        sprite = get_frame(pet["id"], 0, 0)
+        sprite = get_pet_frame(pet["id"], 0, 0)
         bbox = sprite.getbbox()
         if bbox:
             cropped = sprite.crop(bbox)
@@ -277,7 +287,6 @@ def create_catalog_poster():
             pos_y = box_y + 12
             base.alpha_composite(scaled, (pos_x, pos_y))
             
-        # Label
         draw.text((box_x + box_w // 2, box_y + 104), pet["name"], fill=(245, 245, 250, 255), font=font_name, anchor="mt")
         draw.text((box_x + box_w // 2, box_y + 124), pet["sub"], fill=(140, 140, 155, 255), font=font_sub, anchor="mt")
         
@@ -289,4 +298,4 @@ if __name__ == "__main__":
     create_hero_animated_gif()
     create_actions_animated_gif()
     create_catalog_poster()
-    print("\n🎉 Fresh README assets created in assets/!")
+    print("\n🎉 Fresh README assets created with smooth 220ms pacing & no flashing!")
