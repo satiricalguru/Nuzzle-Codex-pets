@@ -1,0 +1,803 @@
+/**
+ * Nuzzle — AI Coding Companion Studio
+ * Core Application Logic & State Engine
+ */
+
+// 1. DATA MODELS & CATALOG
+const PETS = [
+  {
+    id: 'hu-tao',
+    name: 'Hu Tao',
+    file: 'hu-tao',
+    vibe: 'chaos',
+    element: 'pyro',
+    note: 'spirited · pyro',
+    quote: '“If there’s work to do, I’ll haunt it.”',
+    badge: 'currently your favorite',
+    favorite: true
+  },
+  {
+    id: 'furina',
+    name: 'Furina',
+    file: 'furina',
+    vibe: 'anime',
+    element: 'hydro',
+    note: 'dramatic · hydro',
+    quote: '“Let the drama of code execution unfold!”',
+    badge: 'dramatic flair',
+    favorite: false
+  },
+  {
+    id: 'raiden',
+    name: 'Raiden',
+    file: 'raiden',
+    vibe: 'cozy',
+    element: 'electro',
+    note: 'focused · electro',
+    quote: '“Transcendence requires uninterrupted focus.”',
+    badge: 'zen master',
+    favorite: false
+  },
+  {
+    id: 'ganyu',
+    name: 'Ganyu',
+    file: 'ganyu',
+    vibe: 'cozy',
+    element: 'cryo',
+    note: 'sleepy · cryo',
+    quote: '“Overtime again? I brought extra tea...”',
+    badge: 'gentle companion',
+    favorite: true
+  },
+  {
+    id: 'klee',
+    name: 'Klee',
+    file: 'klee',
+    vibe: 'chaos',
+    element: 'pyro',
+    note: 'tiny · explosive',
+    quote: '“Spark Knight Klee reporting for bug hunting!”',
+    badge: 'pure energy',
+    favorite: false
+  },
+  {
+    id: 'anya',
+    name: 'Anya',
+    file: 'anya',
+    vibe: 'anime',
+    element: 'esper',
+    note: 'telepathic · pink',
+    quote: '“Waku waku! Agent is planning something big!”',
+    badge: 'mind reader',
+    favorite: false
+  },
+  {
+    id: 'aiko',
+    name: 'Aiko',
+    file: 'aiko',
+    vibe: 'anime',
+    element: 'anemo',
+    note: 'bright · curious',
+    quote: '“Every line of code is a new little adventure.”',
+    badge: 'curious explorer',
+    favorite: false
+  },
+  {
+    id: 'ayaka',
+    name: 'Ayaka',
+    file: 'ayaka',
+    vibe: 'cozy',
+    element: 'cryo',
+    note: 'elegant · cryo',
+    quote: '“May your compilation be swift and graceful.”',
+    badge: 'calm precision',
+    favorite: false
+  }
+];
+
+const INITIAL_AGENTS = [
+  { id: 'codex', name: 'Codex', key: 'codex', mark: 'C', desc: 'Your local coding companion, ready for the next prompt.', active: true },
+  { id: 'claude', name: 'Claude Code', key: 'claude', mark: '✦', desc: 'Thoughtful, methodical, and always up for a long session.', active: true },
+  { id: 'cursor', name: 'Cursor', key: 'cursor', mark: '⌁', desc: 'Fast pair programming with a taste for good shortcuts.', active: true },
+  { id: 'antigravity', name: 'Antigravity', key: 'antigravity', mark: '↗', desc: 'Exploring new ideas with a little lift.', active: true },
+  { id: 'gemini', name: 'Gemini', key: 'gemini', mark: '✧', desc: 'A multi-modal spark for the edges of your work.', active: true },
+  { id: 'opencode', name: 'OpenCode', key: 'opencode', mark: '◎', desc: 'Open tooling, honest feedback, no cloud required.', active: false }
+];
+
+const SAMPLE_EVENTS = [
+  { icon: '✦', type: 'working', title: 'Codex is refactoring styles.css', sub: 'tool call · write_file', time: 'now' },
+  { icon: '✓', type: 'done', title: 'Claude Code finished a review', sub: '12 files · 4m ago', time: '04m' },
+  { icon: '◌', type: 'wait', title: 'Cursor is thinking', sub: 'waiting for response', time: '07m' },
+  { icon: '✓', type: 'done', title: 'Gemini completed a summary', sub: 'task complete · 11m ago', time: '11m' },
+  { icon: '↗', type: 'working', title: 'Antigravity planned agent roadmap', sub: 'workflow · execute_plan', time: '14m' }
+];
+
+// 2. STATE STORE & LOCALSTORAGE PERSISTENCE
+const STORAGE_KEYS = {
+  SETTINGS: 'nuzzle_settings_v1',
+  FAVORITES: 'nuzzle_favorites_v1',
+  SELECTED_PET: 'nuzzle_selected_pet_v1',
+  AGENTS: 'nuzzle_agents_v1'
+};
+
+function loadStored(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch (e) {
+    return fallback;
+  }
+}
+
+function saveStored(key, val) {
+  try {
+    localStorage.setItem(key, JSON.stringify(val));
+  } catch (e) {
+    console.warn('LocalStorage save failed:', e);
+  }
+}
+
+const state = {
+  selectedPetId: loadStored(STORAGE_KEYS.SELECTED_PET, 'hu-tao'),
+  favorites: new Set(loadStored(STORAGE_KEYS.FAVORITES, ['hu-tao', 'ganyu'])),
+  settings: loadStored(STORAGE_KEYS.SETTINGS, {
+    petSize: 'm',
+    noise: true,
+    animation: true,
+    showMessages: true,
+    launchGreeting: true,
+    keepOnTop: false,
+    petSounds: true,
+    completionSounds: false
+  }),
+  agents: loadStored(STORAGE_KEYS.AGENTS, INITIAL_AGENTS),
+  activity: [...SAMPLE_EVENTS],
+  currentView: 'overview',
+  currentSettingsTab: 'appearance',
+  activePetState: 'idle',
+  paletteIndex: 0
+};
+
+// 3. SYNTHETIC AUDIO ENGINE (Web Audio API for gentle micro-chimes)
+let audioCtx = null;
+function playChime(type = 'pat') {
+  if (!state.settings.petSounds) return;
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    
+    const now = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    
+    osc.type = 'sine';
+    if (type === 'pat') {
+      // Happy two-tone chime (E5 -> A5)
+      osc.frequency.setValueAtTime(659.25, now);
+      osc.frequency.exponentialRampToValueAtTime(880.00, now + 0.15);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.36);
+    } else if (type === 'pop') {
+      // Subtle toggle tick
+      osc.frequency.setValueAtTime(520, now);
+      gain.gain.setValueAtTime(0.04, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.09);
+    }
+  } catch (e) {
+    // Audio Context not permitted without prior user gesture
+  }
+}
+
+// 4. DOM HELPERS
+const $ = (selector, root = document) => root.querySelector(selector);
+const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+
+function artStyle(file) {
+  return `background-image:url('/pets/${file}.png')`;
+}
+
+// 5. PET SPRITE ANIMATION & INTERACTION ENGINE
+let petStateTimeout = null;
+
+function setPetState(newState, durationMs = 2000) {
+  const heroArt = $('#hero-pet-art');
+  const stateTag = $('#hero-pet-state-tag');
+  if (!heroArt) return;
+
+  state.activePetState = newState;
+  heroArt.className = `pet-art state-${newState}`;
+  if (stateTag) stateTag.textContent = `${newState} state`;
+
+  if (petStateTimeout) clearTimeout(petStateTimeout);
+  if (newState !== 'idle') {
+    petStateTimeout = setTimeout(() => {
+      heroArt.className = 'pet-art state-idle';
+      state.activePetState = 'idle';
+      if (stateTag) stateTag.textContent = 'idle state';
+    }, durationMs);
+  }
+}
+
+function createHeartBurst(event) {
+  const container = $('#pet-particles');
+  if (!container) return;
+  
+  const hearts = ['♡', '♥', '✦', '✧'];
+  for (let i = 0; i < 5; i++) {
+    const heart = document.createElement('span');
+    heart.className = 'burst-heart';
+    heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+    const dx = (Math.random() * 80 - 40) + 'px';
+    heart.style.setProperty('--dx', dx);
+    heart.style.left = (35 + Math.random() * 30) + '%';
+    heart.style.top = (40 + Math.random() * 20) + '%';
+    container.appendChild(heart);
+    setTimeout(() => heart.remove(), 1200);
+  }
+}
+
+function patActivePet() {
+  const activePet = PETS.find(p => p.id === state.selectedPetId) || PETS[0];
+  setPetState('pat', 2200);
+  createHeartBurst();
+  playChime('pat');
+
+  const btn = $('#pet-me-button');
+  if (btn) {
+    btn.textContent = `♡ ${activePet.name} is blushing`;
+    setTimeout(() => { btn.textContent = '♡ pet companion'; }, 2200);
+  }
+  showToast(`${activePet.name} received a warm head pat!`);
+}
+
+// 6. COMPANION SELECTION & SYNCHRONIZATION
+function selectCompanion(petId) {
+  const pet = PETS.find(p => p.id === petId);
+  if (!pet) return;
+
+  state.selectedPetId = petId;
+  saveStored(STORAGE_KEYS.SELECTED_PET, petId);
+
+  renderFeaturedPet();
+  renderPetStrip();
+  const activeFilter = $('.filter-button.active')?.dataset.filter || 'all';
+  renderLibrary(activeFilter, $('#pet-search')?.value || '');
+  setPetState('pat', 1500);
+  createHeartBurst();
+  playChime('pat');
+  showToast(`${pet.name} is now your active companion`);
+}
+
+function toggleFavorite(petId) {
+  if (state.favorites.has(petId)) {
+    state.favorites.delete(petId);
+    showToast(`Removed from favorites`);
+  } else {
+    state.favorites.add(petId);
+    playChime('pat');
+    showToast(`Added to favorites`);
+  }
+  saveStored(STORAGE_KEYS.FAVORITES, [...state.favorites]);
+
+  renderFeaturedPet();
+  renderPetStrip();
+  const filter = $('.filter-button.active')?.dataset.filter || 'all';
+  renderLibrary(filter, $('#pet-search')?.value || '');
+}
+
+// 7. RENDER FUNCTIONS
+function renderFeaturedPet() {
+  const pet = PETS.find(p => p.id === state.selectedPetId) || PETS[0];
+  const heroArt = $('#hero-pet-art');
+  const heroName = $('#hero-pet-name');
+  const heroQuote = $('#hero-pet-quote');
+  const heroBadge = $('#hero-pet-badge');
+  const heroVibe = $('#hero-pet-vibe');
+
+  if (heroArt) {
+    heroArt.style.backgroundImage = `url('/pets/${pet.file}.png')`;
+    heroArt.setAttribute('aria-label', `${pet.name} companion sprite`);
+  }
+  if (heroName) heroName.textContent = pet.name;
+  if (heroQuote) heroQuote.textContent = pet.quote;
+  if (heroBadge) {
+    heroBadge.innerHTML = `<span class="mini-spark">✦</span> ${state.favorites.has(pet.id) ? 'currently your favorite' : pet.badge}`;
+  }
+  if (heroVibe) heroVibe.textContent = `${pet.vibe} · ${pet.element}`;
+}
+
+function renderPetStrip() {
+  const strip = $('#pet-strip');
+  if (!strip) return;
+
+  // Show 4 pets (prioritize selected and favorites)
+  const displayPets = PETS.slice(0, 4);
+  strip.innerHTML = displayPets.map(pet => {
+    const isSelected = pet.id === state.selectedPetId;
+    const isFav = state.favorites.has(pet.id);
+    return `
+      <div class="pet-tile ${isSelected ? 'selected' : ''}" data-pet-id="${pet.id}" role="listitem" tabindex="0">
+        <div class="pet-tile-art" style="${artStyle(pet.file)}"></div>
+        <div class="pet-tile-copy">
+          <strong>${pet.name}</strong>
+          <small>${pet.note}</small>
+        </div>
+        <button class="pet-tile-fav ${isFav ? 'active' : ''}" data-fav-id="${pet.id}" aria-label="Favorite ${pet.name}" title="Favorite ${pet.name}">♥</button>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderLibrary(filter = 'all', search = '') {
+  const grid = $('#library-grid');
+  if (!grid) return;
+
+  const query = search.trim().toLowerCase();
+  const visible = PETS.filter(pet => {
+    const matchesFilter = (filter === 'all' || pet.vibe === filter);
+    const matchesSearch = !query || `${pet.name} ${pet.note} ${pet.quote} ${pet.element}`.toLowerCase().includes(query);
+    return matchesFilter && matchesSearch;
+  });
+
+  const countDisplay = $('#library-count-display');
+  if (countDisplay) countDisplay.textContent = visible.length;
+
+  if (!visible.length) {
+    grid.innerHTML = '<div class="empty-state">No tiny companions found matching your criteria. Try another search.</div>';
+    return;
+  }
+
+  grid.innerHTML = visible.map(pet => {
+    const isActive = pet.id === state.selectedPetId;
+    const isFav = state.favorites.has(pet.id);
+    return `
+      <article class="library-card ${isActive ? 'is-active-companion' : ''}" data-pet-id="${pet.id}">
+        <div class="library-art" style="${artStyle(pet.file)}" data-action="select-companion" data-pet-id="${pet.id}" title="Click to make ${pet.name} your companion"></div>
+        <div class="library-info">
+          <div>
+            <strong>${pet.name}</strong>
+            <small>${pet.note}</small>
+          </div>
+          <button class="library-heart ${isFav ? 'active' : ''}" data-fav-id="${pet.id}" aria-label="Favorite ${pet.name}" title="Favorite ${pet.name}">♥</button>
+        </div>
+        <div class="library-card-actions">
+          <button class="library-select-btn" data-action="select-companion" data-pet-id="${pet.id}">
+            ${isActive ? '✓ Active companion' : 'Set as companion'}
+          </button>
+        </div>
+      </article>
+    `;
+  }).join('');
+}
+
+function renderAgents() {
+  const grid = $('#agent-grid');
+  if (!grid) return;
+
+  grid.innerHTML = state.agents.map(agent => `
+    <article class="agent-card">
+      <div class="agent-card-top">
+        <div class="agent-logo ${agent.key}">${agent.mark}</div>
+        <button class="toggle ${agent.active ? 'on' : ''}" data-agent-toggle="${agent.id}" aria-label="Toggle ${agent.name}">
+          <span></span>
+        </button>
+      </div>
+      <h3>${agent.name}</h3>
+      <p>${agent.desc}</p>
+      <div class="agent-card-foot">
+        <span><i class="green-dot"></i> ${agent.active ? 'connected' : 'available'}</span>
+        <button data-toast="${agent.name} hook listener is ready">configure ↗</button>
+      </div>
+    </article>
+  `).join('');
+
+  const activeCount = state.agents.filter(a => a.active).length;
+  const totalCount = state.agents.length;
+  const navCount = $('#nav-agent-count');
+  const orbitCount = $('#orbit-count');
+  const activeAgentsNum = $('#active-agents-num');
+
+  if (navCount) navCount.textContent = `${activeCount}/${totalCount}`;
+  if (orbitCount) orbitCount.textContent = activeCount;
+  if (activeAgentsNum) activeAgentsNum.textContent = activeCount;
+}
+
+function renderActivity() {
+  const list = $('#activity-list');
+  if (!list) return;
+
+  list.innerHTML = state.activity.map(item => `
+    <div class="activity-item">
+      <div class="activity-icon ${item.type}">${item.icon}</div>
+      <div class="activity-copy">
+        <strong>${item.title}</strong>
+        <small>${item.sub}</small>
+      </div>
+      <span class="activity-time">${item.time}</span>
+    </div>
+  `).join('');
+}
+
+// 8. COMMAND PALETTE SEARCH & NAVIGATION
+const PALETTE_ACTIONS = [
+  { id: 'view-overview', category: 'Navigation', title: 'Go to Overview', icon: '⌂', shortcut: '1', action: () => setView('overview') },
+  { id: 'view-library', category: 'Navigation', title: 'Browse Pet Library', icon: '✣', shortcut: '2', action: () => setView('library') },
+  { id: 'view-agents', category: 'Navigation', title: 'Manage Agents & Integrations', icon: '⌘', shortcut: '3', action: () => setView('agents') },
+  { id: 'view-settings', category: 'Navigation', title: 'Open Settings & Preferences', icon: '◌', shortcut: '4', action: () => setView('settings') },
+  { id: 'act-pat', category: 'Pet Actions', title: 'Pet Active Companion', icon: '♡', action: () => patActivePet() },
+  { id: 'act-sim', category: 'Agent Actions', title: 'Simulate Agent Tool Call', icon: '⚡︎', action: () => simulateAgentEvent() },
+  { id: 'pet-hu-tao', category: 'Switch Companion', title: 'Switch Companion to Hu Tao', icon: '✦', action: () => selectCompanion('hu-tao') },
+  { id: 'pet-furina', category: 'Switch Companion', title: 'Switch Companion to Furina', icon: '✦', action: () => selectCompanion('furina') },
+  { id: 'pet-ganyu', category: 'Switch Companion', title: 'Switch Companion to Ganyu', icon: '✦', action: () => selectCompanion('ganyu') },
+  { id: 'pet-klee', category: 'Switch Companion', title: 'Switch Companion to Klee', icon: '✦', action: () => selectCompanion('klee') },
+  { id: 'pet-raiden', category: 'Switch Companion', title: 'Switch Companion to Raiden', icon: '✦', action: () => selectCompanion('raiden') },
+  { id: 'pet-anya', category: 'Switch Companion', title: 'Switch Companion to Anya', icon: '✦', action: () => selectCompanion('anya') }
+];
+
+function renderCommandPalette(query = '') {
+  const container = $('#palette-results');
+  if (!container) return;
+
+  const q = query.trim().toLowerCase();
+  const filtered = PALETTE_ACTIONS.filter(item => !q || (item.title + ' ' + item.category).toLowerCase().includes(q));
+
+  if (!filtered.length) {
+    container.innerHTML = '<div class="empty-state" style="padding:20px;">No matching commands</div>';
+    return;
+  }
+
+  state.paletteIndex = Math.min(state.paletteIndex, filtered.length - 1);
+  if (state.paletteIndex < 0) state.paletteIndex = 0;
+
+  container.innerHTML = filtered.map((item, index) => `
+    <button class="palette-item ${index === state.paletteIndex ? 'highlighted' : ''}" data-palette-id="${item.id}">
+      <span class="palette-icon">${item.icon}</span>
+      <span>${item.title}</span>
+      ${item.shortcut ? `<kbd>${item.shortcut}</kbd>` : ''}
+    </button>
+  `).join('');
+}
+
+function openPalette(open = true) {
+  const palette = $('#command-palette');
+  const input = $('#palette-input');
+  if (!palette) return;
+
+  palette.classList.toggle('open', open);
+  palette.setAttribute('aria-hidden', String(!open));
+
+  if (open) {
+    state.paletteIndex = 0;
+    if (input) {
+      input.value = '';
+      renderCommandPalette('');
+      setTimeout(() => input.focus(), 50);
+    }
+  }
+}
+
+function executePaletteItem(index) {
+  const q = $('#palette-input')?.value.trim().toLowerCase() || '';
+  const filtered = PALETTE_ACTIONS.filter(item => !q || (item.title + ' ' + item.category).toLowerCase().includes(q));
+  const target = filtered[index];
+  if (target && target.action) {
+    openPalette(false);
+    target.action();
+  }
+}
+
+// 9. TOAST NOTIFICATION SYSTEM
+function showToast(message) {
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.innerHTML = `<span>✦</span><span>${message}</span>`;
+  $('.toast-region').appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add('fade');
+    setTimeout(() => toast.remove(), 300);
+  }, 2300);
+}
+
+// 10. NAVIGATION & VIEW CONTROLLER
+function setView(view) {
+  state.currentView = view;
+  $$('.nav-item').forEach(item => item.classList.toggle('active', item.dataset.view === view));
+  $$('.view-panel').forEach(panel => panel.classList.toggle('active', panel.id === `${view}-view`));
+  const pageTitle = $('#page-title');
+  if (pageTitle) pageTitle.textContent = view;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// 11. SETTINGS CONTROLLER
+function applySettings() {
+  // Pet scale
+  const scaleMap = { s: 0.85, m: 1, l: 1.18 };
+  const scaleVal = scaleMap[state.settings.petSize] || 1;
+  document.documentElement.style.setProperty('--pet-scale', scaleVal);
+
+  // Noise overlay
+  document.body.classList.toggle('no-noise', !state.settings.noise);
+
+  // Size buttons UI
+  $$('.size-option').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.size === state.settings.petSize);
+  });
+
+  // Toggles UI
+  $$('[data-setting-key]').forEach(toggle => {
+    const key = toggle.dataset.settingKey;
+    if (key in state.settings) {
+      toggle.classList.toggle('on', Boolean(state.settings[key]));
+    }
+  });
+}
+
+function setSettingsTab(tabName) {
+  state.currentSettingsTab = tabName;
+  $$('.settings-tab').forEach(tab => {
+    const isTarget = tab.dataset.settingsTab === tabName;
+    tab.classList.toggle('active', isTarget);
+    tab.setAttribute('aria-selected', String(isTarget));
+  });
+  $$('.settings-panel').forEach(panel => {
+    panel.classList.toggle('active', panel.id === `settings-panel-${tabName}`);
+  });
+}
+
+// 12. LIVE ACTIVITY SIMULATOR
+const SIM_ACTIVITIES = [
+  { icon: '✦', type: 'working', title: 'Codex generated component unit tests', sub: 'tool call · run_command', time: 'just now' },
+  { icon: '✓', type: 'done', title: 'Claude Code resolved merge conflicts', sub: 'git integration · success', time: 'just now' },
+  { icon: '⌁', type: 'working', title: 'Cursor applied inline AI edit', sub: 'fast diff · 3 chunks', time: 'just now' },
+  { icon: '✧', type: 'done', title: 'Gemini synthesized documentation', sub: 'multimodal · index.md', time: 'just now' }
+];
+
+function simulateAgentEvent() {
+  const item = SIM_ACTIVITIES[Math.floor(Math.random() * SIM_ACTIVITIES.length)];
+  state.activity.unshift(item);
+  if (state.activity.length > 10) state.activity.pop();
+  renderActivity();
+  setPetState('work', 1800);
+  playChime('pop');
+  showToast(`${item.title}`);
+}
+
+// 13. DATE/TIME TICKER
+function updateDateTime() {
+  const el = $('#hero-datetime');
+  if (!el) return;
+  const now = new Date();
+  const options = { weekday: 'long', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+  el.textContent = now.toLocaleDateString('en-US', options);
+}
+
+// 14. GLOBAL EVENT DELEGATION
+document.addEventListener('click', event => {
+  // Rail navigation
+  const nav = event.target.closest('[data-view]');
+  if (nav) return setView(nav.dataset.view);
+
+  const viewTarget = event.target.closest('[data-view-target]');
+  if (viewTarget) {
+    openPalette(false);
+    return setView(viewTarget.dataset.viewTarget);
+  }
+
+  // Toast triggers
+  const toastTarget = event.target.closest('[data-toast]');
+  if (toastTarget) showToast(toastTarget.dataset.toast);
+
+  // Companion pet action
+  if (event.target.id === 'pet-me-button' || event.target.closest('#hero-pet-art')) {
+    patActivePet();
+    return;
+  }
+
+  // Pet selection from library or tiles
+  const selectAction = event.target.closest('[data-action="select-companion"]');
+  if (selectAction) {
+    selectCompanion(selectAction.dataset.petId);
+    return;
+  }
+
+  const petTile = event.target.closest('.pet-tile');
+  if (petTile && !event.target.closest('button')) {
+    selectCompanion(petTile.dataset.petId);
+    return;
+  }
+
+  // Favorite heart click
+  const favBtn = event.target.closest('[data-fav-id]');
+  if (favBtn) {
+    event.stopPropagation();
+    toggleFavorite(favBtn.dataset.favId);
+    return;
+  }
+
+  // Library filter tabs
+  const filterBtn = event.target.closest('[data-filter]');
+  if (filterBtn) {
+    $$('.filter-button').forEach(b => {
+      const active = b === filterBtn;
+      b.classList.toggle('active', active);
+      b.setAttribute('aria-selected', String(active));
+    });
+    renderLibrary(filterBtn.dataset.filter, $('#pet-search')?.value || '');
+    return;
+  }
+
+  // Settings sub tabs
+  const settingsTab = event.target.closest('[data-settings-tab]');
+  if (settingsTab) {
+    setSettingsTab(settingsTab.dataset.settingsTab);
+    return;
+  }
+
+  // Settings toggles
+  const settingToggle = event.target.closest('[data-setting-key]');
+  if (settingToggle) {
+    const key = settingToggle.dataset.settingKey;
+    state.settings[key] = !state.settings[key];
+    saveStored(STORAGE_KEYS.SETTINGS, state.settings);
+    applySettings();
+    playChime('pop');
+    showToast(`${key} is now ${state.settings[key] ? 'enabled' : 'disabled'}`);
+    return;
+  }
+
+  // Agent toggle switch
+  const agentToggle = event.target.closest('[data-agent-toggle]');
+  if (agentToggle) {
+    const agentId = agentToggle.dataset.agentToggle;
+    const targetAgent = state.agents.find(a => a.id === agentId);
+    if (targetAgent) {
+      targetAgent.active = !targetAgent.active;
+      saveStored(STORAGE_KEYS.AGENTS, state.agents);
+      renderAgents();
+      playChime('pop');
+      showToast(`${targetAgent.name} is now ${targetAgent.active ? 'connected' : 'disconnected'}`);
+    }
+    return;
+  }
+
+  // Size option picker
+  const sizeOpt = event.target.closest('.size-option');
+  if (sizeOpt) {
+    state.settings.petSize = sizeOpt.dataset.size;
+    saveStored(STORAGE_KEYS.SETTINGS, state.settings);
+    applySettings();
+    playChime('pop');
+    showToast(`Pet size set to ${sizeOpt.dataset.size.toUpperCase()}`);
+    return;
+  }
+
+  // Reset data button
+  if (event.target.id === 'reset-data-btn') {
+    localStorage.clear();
+    state.selectedPetId = 'hu-tao';
+    state.favorites = new Set(['hu-tao', 'ganyu']);
+    state.settings = { petSize: 'm', noise: true, animation: true, showMessages: true, launchGreeting: true, keepOnTop: false, petSounds: true, completionSounds: false };
+    state.agents = INITIAL_AGENTS;
+    applySettings();
+    renderFeaturedPet();
+    renderPetStrip();
+    renderLibrary();
+    renderAgents();
+    showToast('Preferences restored to defaults.');
+    return;
+  }
+
+  // Simulate event button
+  if (event.target.id === 'simulate-event-button') {
+    simulateAgentEvent();
+    return;
+  }
+
+  // Summon button in hero
+  if (event.target.id === 'summon-button') {
+    openPalette(true);
+    return;
+  }
+
+  // Command palette item click
+  const paletteItem = event.target.closest('[data-palette-id]');
+  if (paletteItem) {
+    const item = PALETTE_ACTIONS.find(p => p.id === paletteItem.dataset.paletteId);
+    if (item && item.action) {
+      openPalette(false);
+      item.action();
+    }
+    return;
+  }
+
+  // Close palette on backdrop click
+  if (event.target === $('#command-palette')) {
+    openPalette(false);
+  }
+});
+
+// Search input listeners
+$('#pet-search')?.addEventListener('input', e => {
+  const activeFilter = $('.filter-button.active')?.dataset.filter || 'all';
+  renderLibrary(activeFilter, e.target.value);
+});
+
+$('#palette-input')?.addEventListener('input', e => {
+  state.paletteIndex = 0;
+  renderCommandPalette(e.target.value);
+});
+
+// Keyboard navigation (⌘ K, Esc, 1-4, Arrows)
+document.addEventListener('keydown', event => {
+  const paletteOpen = $('#command-palette')?.classList.contains('open');
+
+  // Command palette open trigger
+  if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+    event.preventDefault();
+    openPalette(!paletteOpen);
+    return;
+  }
+
+  if (paletteOpen) {
+    if (event.key === 'Escape') {
+      openPalette(false);
+      return;
+    }
+    if (['1', '2', '3', '4'].includes(event.key) && !$('#palette-input').value) {
+      event.preventDefault();
+      const viewMap = { '1': 'overview', '2': 'library', '3': 'agents', '4': 'settings' };
+      openPalette(false);
+      setView(viewMap[event.key]);
+      return;
+    }
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      const count = $$('#palette-results .palette-item').length;
+      if (count > 0) {
+        state.paletteIndex = (state.paletteIndex + 1) % count;
+        renderCommandPalette($('#palette-input')?.value || '');
+      }
+      return;
+    }
+    if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      const count = $$('#palette-results .palette-item').length;
+      if (count > 0) {
+        state.paletteIndex = (state.paletteIndex - 1 + count) % count;
+        renderCommandPalette($('#palette-input')?.value || '');
+      }
+      return;
+    }
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      executePaletteItem(state.paletteIndex);
+      return;
+    }
+  }
+});
+
+// 15. INITIALIZATION
+renderFeaturedPet();
+renderPetStrip();
+renderLibrary();
+renderAgents();
+renderActivity();
+applySettings();
+updateDateTime();
+setInterval(updateDateTime, 30000);
+
+if (state.settings.launchGreeting) {
+  setTimeout(() => {
+    setPetState('pat', 1600);
+    createHeartBurst();
+  }, 400);
+}

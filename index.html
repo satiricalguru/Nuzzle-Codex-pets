@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f5f1ea" />
+    <meta name="description" content="Nuzzle is a local-first companion studio for AI coding agents with 8x9 animation sprite atlases." />
+    <title>Nuzzle — your agents, with a little more life</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="app-noise" aria-hidden="true"></div>
+    <div class="app-shell">
+      <!-- SIDEBAR / RAIL -->
+      <aside class="rail">
+        <div class="brand-lockup" aria-label="Nuzzle home" data-view-target="overview">
+          <div class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></div>
+          <div class="brand-name">nuzzle<span>·</span></div>
+        </div>
+
+        <div class="rail-label">workspace</div>
+        <nav class="rail-nav" aria-label="Primary navigation">
+          <button class="nav-item active" data-view="overview"><span class="nav-icon">⌂</span> <span>Overview</span></button>
+          <button class="nav-item" data-view="library"><span class="nav-icon">✣</span> <span>Pet library</span> <em id="nav-pet-count">8</em></button>
+          <button class="nav-item" data-view="agents"><span class="nav-icon">⌘</span> <span>Agents</span> <em class="live-count" id="nav-agent-count">5/6</em></button>
+          <button class="nav-item" data-view="settings"><span class="nav-icon">◌</span> <span>Settings</span></button>
+        </nav>
+
+        <div class="rail-spacer"></div>
+        <div class="rail-status">
+          <div class="status-orb" aria-hidden="true"><span></span></div>
+          <div><strong>Local & quiet</strong><small>Nothing leaves your Mac</small></div>
+          <button class="icon-button" data-toast="Local-first mode is active. Zero data sent to cloud." aria-label="Local-first privacy information">?</button>
+        </div>
+        <div class="rail-footer">
+          <span class="version-dot"></span> Nuzzle 0.1.0 <span>·</span> <a href="https://github.com/ChanceYu/CoPet" target="_blank" rel="noreferrer">open source</a>
+        </div>
+      </aside>
+
+      <!-- MAIN CANVAS -->
+      <main class="main-canvas">
+        <header class="topbar">
+          <div class="breadcrumb"><span>companion studio</span><b>/</b><strong id="page-title">overview</strong></div>
+          <div class="topbar-actions">
+            <button class="status-pill" id="system-status-btn" data-toast="All agent listeners and animations are purring smoothly."><span class="pulse-dot"></span> all systems purring</button>
+            <button class="icon-button" id="notification-btn" data-toast="All agent activity is calm and up to date." aria-label="Notifications">♧<i></i></button>
+            <button class="avatar-button" id="profile-btn" data-toast="Nuzzle Companion Studio (Local Session)" aria-label="User profile">JP</button>
+          </div>
+        </header>
+
+        <!-- VIEW 1: OVERVIEW -->
+        <section class="view-panel active" id="overview-view" aria-labelledby="overview-heading">
+          <div class="hero-intro reveal">
+            <div>
+              <div class="eyebrow"><span class="eyebrow-line"></span> <span id="hero-datetime">Tuesday, August 25 · 10:55 AM</span> <span class="eyebrow-mono">LOCAL HOOKS ON</span></div>
+              <h1 id="overview-heading">Your agents are busy.<br /><i>Someone should keep them company.</i></h1>
+              <p class="lede">Nuzzle turns the quiet moments between prompts, tools, and completions into something you can see — and pet.</p>
+            </div>
+            <button class="primary-button" id="summon-button"><span>✦</span> summon a friend <kbd>⌘ K</kbd></button>
+          </div>
+
+          <div class="overview-grid">
+            <!-- FEATURED COMPANION STAGE -->
+            <article class="feature-card pet-stage reveal delay-1" id="featured-pet-card">
+              <div class="pet-particles" id="pet-particles" aria-hidden="true"></div>
+              <div class="card-topline">
+                <span class="eyebrow" id="stage-eyebrow">your active companion</span>
+                <button class="more-button" id="stage-actions-btn" data-toast="Companion actions: Pat, switch, or inspect sprite frames" aria-label="Companion actions">•••</button>
+              </div>
+              <div class="pet-stage-content">
+                <div class="pet-art state-idle" id="hero-pet-art" role="img" aria-label="Active pet sprite" title="Click to pat your companion!"></div>
+                <div class="pet-copy">
+                  <div class="pet-badge" id="hero-pet-badge"><span class="mini-spark">✦</span> currently your favorite</div>
+                  <h2 id="hero-pet-name">Hu Tao</h2>
+                  <p id="hero-pet-quote">“If there’s work to do, I’ll haunt it.”</p>
+                  <div class="pet-meta" id="hero-pet-meta">
+                    <span><i class="green-dot"></i> online & happy</span>
+                    <span id="hero-pet-vibe">chaos · pyro</span>
+                  </div>
+                  <div class="pet-actions">
+                    <button class="small-button" id="pet-me-button">♡ pet companion</button>
+                    <button class="text-button" data-view-target="library">change pet <span>↗</span></button>
+                  </div>
+                </div>
+              </div>
+              <div class="stage-shadow" aria-hidden="true"></div>
+              <div class="stage-ribbon">
+                <span>8×9 animated atlas</span>
+                <span>codex-compatible</span>
+                <span id="hero-pet-state-tag">idle state</span>
+              </div>
+            </article>
+
+            <!-- LIVE ACTIVITY STREAM CARD -->
+            <article class="feature-card activity-card reveal delay-2">
+              <div class="card-topline">
+                <span class="eyebrow">live activity stream</span>
+                <span class="live-label"><i></i> streaming</span>
+              </div>
+              <div class="activity-summary">
+                <strong id="active-agents-num">5</strong>
+                <span>agents connected<br /><small id="active-agents-sub">2 active right now</small></span>
+                <div class="agent-stack" id="agent-avatar-stack">
+                  <span class="agent-chip codex">C</span>
+                  <span class="agent-chip claude">✦</span>
+                  <span class="agent-chip cursor">⌁</span>
+                  <span class="agent-chip more">+2</span>
+                </div>
+              </div>
+              <div class="activity-list" id="activity-list" role="feed" aria-label="Recent agent activities"></div>
+              <button class="full-width-button" id="simulate-event-button">simulate agent event <span>⚡︎</span></button>
+            </article>
+          </div>
+
+          <!-- QUICK DISPATCH STRIP -->
+          <div class="section-heading reveal delay-3">
+            <div>
+              <span class="eyebrow">quick dispatch</span>
+              <h2>Say hello to your crew</h2>
+            </div>
+            <button class="text-button" data-view-target="library">browse all pets <span>↗</span></button>
+          </div>
+          <div class="pet-strip reveal delay-3" id="pet-strip" role="list"></div>
+        </section>
+
+        <!-- VIEW 2: PET LIBRARY -->
+        <section class="view-panel" id="library-view" aria-labelledby="library-heading">
+          <div class="page-intro">
+            <div>
+              <div class="eyebrow"><span class="eyebrow-line"></span> the collection</div>
+              <h1 id="library-heading">Find your next <i>sidekick.</i></h1>
+              <p>Real 8×9 animation sprite atlases, packaged for the Codex pet format. Pick a mood, then make it yours.</p>
+            </div>
+            <div class="library-stats"><strong id="library-count-display">8</strong><span>pets in<br />the library</span></div>
+          </div>
+          <div class="toolbar">
+            <div class="search-field">
+              <span aria-hidden="true">⌕</span>
+              <input id="pet-search" placeholder="Search by name, element, or vibe" aria-label="Search pets by name or vibe" />
+              <kbd>/</kbd>
+            </div>
+            <div class="filter-group" role="tablist" aria-label="Filter pets by vibe">
+              <button class="filter-button active" data-filter="all" role="tab" aria-selected="true">all</button>
+              <button class="filter-button" data-filter="anime" role="tab" aria-selected="false">anime</button>
+              <button class="filter-button" data-filter="cozy" role="tab" aria-selected="false">cozy</button>
+              <button class="filter-button" data-filter="chaos" role="tab" aria-selected="false">chaos</button>
+            </div>
+          </div>
+          <div class="library-grid" id="library-grid" role="region" aria-label="Pet catalog"></div>
+        </section>
+
+        <!-- VIEW 3: AGENTS INTEGRATIONS -->
+        <section class="view-panel" id="agents-view" aria-labelledby="agents-heading">
+          <div class="page-intro">
+            <div>
+              <div class="eyebrow"><span class="eyebrow-line"></span> integrations</div>
+              <h1 id="agents-heading">Every agent gets<br /><i>a little personality.</i></h1>
+              <p>Connect the tools you already use. Nuzzle stays local, listens for lifecycle events, and lets your companion react in real time.</p>
+            </div>
+            <div class="connection-orbit"><span id="orbit-count">5</span><small>connected</small></div>
+          </div>
+          <div class="agent-grid" id="agent-grid"></div>
+          <div class="integration-note">
+            <span>✦</span>
+            <div>
+              <strong>How the magic works</strong>
+              <p>Nuzzle listens for prompt, tool, waiting, completion, and error events through lightweight local hooks — the same dependable event language that powers CoPet.</p>
+            </div>
+            <button class="text-button" id="view-integration-doc-btn" data-toast="Integration notes: Hook endpoints listen on localhost:4173/events">read the notes <span>↗</span></button>
+          </div>
+        </section>
+
+        <!-- VIEW 4: SETTINGS -->
+        <section class="view-panel" id="settings-view" aria-labelledby="settings-heading">
+          <div class="page-intro compact">
+            <div>
+              <div class="eyebrow"><span class="eyebrow-line"></span> preferences</div>
+              <h1 id="settings-heading">Make it <i>yours.</i></h1>
+              <p>Tailor companion behaviors, appearance scaling, sound cues, and privacy.</p>
+            </div>
+          </div>
+          <div class="settings-layout">
+            <!-- SETTINGS SUB TABS -->
+            <div class="settings-nav" role="tablist" aria-label="Settings categories">
+              <button class="settings-tab active" data-settings-tab="appearance" role="tab" aria-selected="true">appearance</button>
+              <button class="settings-tab" data-settings-tab="behavior" role="tab" aria-selected="false">behavior</button>
+              <button class="settings-tab" data-settings-tab="sound" role="tab" aria-selected="false">sound</button>
+              <button class="settings-tab" data-settings-tab="privacy" role="tab" aria-selected="false">privacy</button>
+            </div>
+
+            <!-- SETTINGS CARD PANELS -->
+            <div class="settings-card">
+              <!-- Appearance Panel -->
+              <div class="settings-panel active" id="settings-panel-appearance">
+                <div class="setting-row">
+                  <div>
+                    <strong>Pet Size & Scale</strong>
+                    <p>Scale your companion avatar on stage and in floating mode.</p>
+                  </div>
+                  <div class="size-picker" role="radiogroup" aria-label="Pet size">
+                    <button class="size-option" data-size="s">S</button>
+                    <button class="size-option active" data-size="m">M</button>
+                    <button class="size-option" data-size="l">L</button>
+                  </div>
+                </div>
+                <div class="setting-row">
+                  <div>
+                    <strong>Film Grain Noise Overlay</strong>
+                    <p>Subtle analog texture for the warm editorial look.</p>
+                  </div>
+                  <button class="toggle on" id="toggle-noise" data-setting-key="noise" aria-label="Toggle noise overlay"><span></span></button>
+                </div>
+                <div class="setting-row">
+                  <div>
+                    <strong>Smooth Sprite Animations</strong>
+                    <p>Continuous frame stepping for companion idle and react states.</p>
+                  </div>
+                  <button class="toggle on" id="toggle-animation" data-setting-key="animation" aria-label="Toggle sprite animation"><span></span></button>
+                </div>
+              </div>
+
+              <!-- Behavior Panel -->
+              <div class="settings-panel" id="settings-panel-behavior">
+                <div class="setting-row">
+                  <div>
+                    <strong>Show Agent Messages</strong>
+                    <p>Let your companion surface the latest prompt or tool update.</p>
+                  </div>
+                  <button class="toggle on" data-setting-key="showMessages" aria-label="Toggle show agent messages"><span></span></button>
+                </div>
+                <div class="setting-row">
+                  <div>
+                    <strong>Launch with Companion Greeting</strong>
+                    <p>Play a tiny wave and blush greeting on application start.</p>
+                  </div>
+                  <button class="toggle on" data-setting-key="launchGreeting" aria-label="Toggle launch greeting"><span></span></button>
+                </div>
+                <div class="setting-row">
+                  <div>
+                    <strong>Keep Nuzzle On Top</strong>
+                    <p>Float above code editors and terminal windows.</p>
+                  </div>
+                  <button class="toggle" data-setting-key="keepOnTop" aria-label="Toggle keep on top"><span></span></button>
+                </div>
+              </div>
+
+              <!-- Sound Panel -->
+              <div class="settings-panel" id="settings-panel-sound">
+                <div class="setting-row">
+                  <div>
+                    <strong>Gentle Pet Reaction Chimes</strong>
+                    <p>Play pleasant micro-tones when petting or favoriting companions.</p>
+                  </div>
+                  <button class="toggle on" data-setting-key="petSounds" aria-label="Toggle pet sounds"><span></span></button>
+                </div>
+                <div class="setting-row">
+                  <div>
+                    <strong>Agent Task Completion Alerts</strong>
+                    <p>Soft notification chime when a long-running agent completes.</p>
+                  </div>
+                  <button class="toggle" data-setting-key="completionSounds" aria-label="Toggle task alerts"><span></span></button>
+                </div>
+              </div>
+
+              <!-- Privacy Panel -->
+              <div class="settings-panel" id="settings-panel-privacy">
+                <div class="setting-row">
+                  <div>
+                    <strong>100% Local-First Storage</strong>
+                    <p>All companion settings and favorites are stored locally in your browser/device.</p>
+                  </div>
+                  <span class="status-pill"><span class="pulse-dot"></span> active</span>
+                </div>
+                <div class="setting-row">
+                  <div>
+                    <strong>Reset Preferences & Cache</strong>
+                    <p>Restore default companions, settings, and clear stored favorites.</p>
+                  </div>
+                  <button class="danger-button" id="reset-data-btn">reset all</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- TOAST REGION -->
+    <div class="toast-region" aria-live="polite"></div>
+
+    <!-- COMMAND PALETTE (⌘ K) -->
+    <div class="command-palette" id="command-palette" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Command Palette">
+      <div class="palette-card">
+        <div class="palette-top">
+          <span>Quick actions & jump</span>
+          <kbd>esc</kbd>
+        </div>
+        <input placeholder="Search commands, pets, views..." id="palette-input" autocomplete="off" />
+        <div class="palette-results" id="palette-results">
+          <!-- Populated dynamically by app.js -->
+        </div>
+      </div>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
