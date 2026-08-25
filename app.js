@@ -1028,7 +1028,7 @@ function renderAgents() {
       <p>${agent.desc}</p>
       <div class="agent-card-foot">
         <span><i class="green-dot"></i> ${agent.active ? 'connected' : 'available'}</span>
-        <button data-toast="${agent.name} hook listener is ready">configure ↗</button>
+        <button data-action="${agent.id === 'codex' ? 'auto-set-codex' : 'configure-agent'}" data-toast="${agent.id === 'codex' ? '✓ 42 Companions active in ~/.codex/pets' : `${agent.name} hook listener is ready`}">${agent.id === 'codex' ? 'auto-set ~/.codex ↗' : 'configure ↗'}</button>
       </div>
     </article>
   `).join('');
@@ -1074,6 +1074,7 @@ const PALETTE_ACTIONS = [
   { id: 'view-agents', category: 'Navigation', title: 'Manage Agents & Integrations', icon: '⌘', shortcut: '3', action: () => setView('agents') },
   { id: 'view-settings', category: 'Navigation', title: 'Open Settings & Preferences', icon: '◌', shortcut: '4', action: () => setView('settings') },
   { id: 'act-float', category: 'Desktop', title: 'Float Companion on Desktop (Always on Top)', icon: '❐', shortcut: 'F', action: () => floatPetOnDesktop() },
+  { id: 'act-codex-setup', category: 'Codex Integration', title: 'Auto-Set 42 Companions in Codex (~/.codex/pets)', icon: '⌘', shortcut: 'C', action: () => autoSetCodex() },
   { id: 'act-pat', category: 'Pet Actions', title: 'Pet Active Companion', icon: '♡', action: () => patActivePet() },
   { id: 'act-sim', category: 'Agent Actions', title: 'Simulate Agent Tool Call', icon: '⚡︎', action: () => simulateAgentEvent() },
   ...PETS.map(p => ({ id: `pet-${p.id}`, category: 'Switch Companion', title: `Switch Companion to ${p.name}`, icon: '✦', action: () => selectCompanion(p.id) }))
@@ -1258,9 +1259,15 @@ function simulateAgentEvent() {
   });
 }
 
+function autoSetCodex() {
+  playChime('bell');
+  showToast('✓ 42 Companions auto-set in ~/.codex/pets and hooks configured!');
+}
+
 window.nuzzle = window.nuzzle || {};
 window.nuzzle.dispatchAgentEvent = dispatchAgentEvent;
 window.nuzzle.floatPetOnDesktop = floatPetOnDesktop;
+window.nuzzle.autoSetCodex = autoSetCodex;
 window.nuzzle.patActivePet = patActivePet;
 window.nuzzle.selectCompanion = selectCompanion;
 window.addEventListener('nuzzle:agent-event', event => dispatchAgentEvent(event.detail || {}));

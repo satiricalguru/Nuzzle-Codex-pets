@@ -1,0 +1,126 @@
+#!/usr/bin/env python3
+"""
+setup_codex.py — Auto-configure Codex with all 42 Nuzzle / CoPet companions
+and setup lifecycle event hooks in ~/.codex/
+"""
+
+import os
+import json
+import shutil
+from pathlib import Path
+
+CODEX_DIR = Path.home() / ".codex"
+CODEX_PETS_DIR = CODEX_DIR / "pets"
+WORKSPACE_DIR = Path(__file__).parent.resolve()
+PUBLIC_PETS_DIR = WORKSPACE_DIR / "public" / "pets"
+TMP_ANIME_PETS_DIR = Path("/tmp/codex-anime-pets/pets")
+
+# Pet catalog metadata
+PETS_DATA = [
+  {"id": "hu-tao", "name": "Hu Tao", "ext": "png", "desc": "Spirited pyro companion for Codex"},
+  {"id": "furina", "name": "Furina", "ext": "png", "desc": "Dramatic hydro companion for Codex"},
+  {"id": "raiden", "name": "Raiden", "ext": "png", "desc": "Focused electro companion for Codex"},
+  {"id": "ganyu", "name": "Ganyu", "ext": "png", "desc": "Gentle cryo companion for Codex"},
+  {"id": "klee", "name": "Klee", "ext": "png", "desc": "Spark Knight explosive companion for Codex"},
+  {"id": "anya", "name": "Anya", "ext": "png", "desc": "Waku waku telepathic companion for Codex"},
+  {"id": "aiko", "name": "Aiko", "ext": "png", "desc": "Curious anemo companion for Codex"},
+  {"id": "ayaka", "name": "Ayaka", "ext": "png", "desc": "Graceful cryo companion for Codex"},
+  {"id": "baobao", "name": "Baobao", "ext": "webp", "desc": "Mystic spirit companion from Under One Person"},
+  {"id": "chen", "name": "Chen", "ext": "webp", "desc": "Sword operator companion from Arknights"},
+  {"id": "conan", "name": "Conan", "ext": "webp", "desc": "Keen detective companion for Codex"},
+  {"id": "kid", "name": "Kid", "ext": "webp", "desc": "Phantom thief companion for Codex"},
+  {"id": "lappland", "name": "Lappland", "ext": "webp", "desc": "Lone wolf swordswoman from Arknights"},
+  {"id": "march-7th", "name": "March 7th", "ext": "webp", "desc": "Cheerful cryo companion from Honkai Star Rail"},
+  {"id": "new-covenant-exusiai", "name": "Exusiai", "ext": "webp", "desc": "Angel marksman companion from Arknights"},
+  {"id": "phoebe", "name": "Phoebe", "ext": "webp", "desc": "Serene cleric companion from Wuthering Waves"},
+  {"id": "regulus-star-antimony", "name": "Regulus", "ext": "webp", "desc": "Radio DJ arcanist from Reverse: 1999"},
+  {"id": "shinchan", "name": "Shinchan", "ext": "webp", "desc": "Cheeky unstoppable companion for Codex"},
+  {"id": "sonetto", "name": "Sonetto", "ext": "webp", "desc": "Field agent companion from Reverse: 1999"},
+  {"id": "vertin", "name": "Vertin", "ext": "webp", "desc": "Timekeeper companion from Reverse: 1999"},
+  {"id": "yoimiya", "name": "Yoimiya", "ext": "webp", "desc": "Fireworks maker companion from Genshin Impact"},
+  {"id": "zani", "name": "Zani", "ext": "webp", "desc": "Dark spark companion from Wuthering Waves"},
+  {"id": "copet-neo", "name": "CoPet Neo", "ext": "gif", "desc": "Original classic CoPet mascot companion"},
+  {"id": "copet-nia", "name": "CoPet Nia", "ext": "gif", "desc": "Gentle soul CoPet mascot companion"},
+  {"id": "copet-mecha", "name": "CoPet Mecha", "ext": "gif", "desc": "Armored mecha companion from CoPet"},
+  {"id": "dj-fuzz", "name": "DJ Fuzz", "ext": "gif", "desc": "Beats and party companion from CoPet"},
+  {"id": "dog", "name": "Lucky Dog", "ext": "gif", "desc": "Loyal debug companion from CoPet"},
+  {"id": "dragon", "name": "Azure Dragon", "ext": "gif", "desc": "Ancient mythic dragon companion from CoPet"},
+  {"id": "duck", "name": "Waddly Duck", "ext": "gif", "desc": "Rubber duck debugging companion from CoPet"},
+  {"id": "goat", "name": "Cloud Goat", "ext": "gif", "desc": "Fluffy mountain companion from CoPet"},
+  {"id": "goku", "name": "Goku", "ext": "gif", "desc": "Legendary powerful companion from CoPet"},
+  {"id": "horse", "name": "Chestnut Horse", "ext": "gif", "desc": "Swift galloping companion from CoPet"},
+  {"id": "monkey", "name": "Clever Monkey", "ext": "gif", "desc": "Cheeky trickster companion from CoPet"},
+  {"id": "orange-cat", "name": "Orange Cat", "ext": "gif", "desc": "Cozy keyboard napping companion from CoPet"},
+  {"id": "ox", "name": "Cream Ox", "ext": "gif", "desc": "Sturdy workhorse companion from CoPet"},
+  {"id": "panda", "name": "Panda", "ext": "gif", "desc": "Zen bamboo break companion from CoPet"},
+  {"id": "pig", "name": "Blush Pig", "ext": "gif", "desc": "Happy trotter companion from CoPet"},
+  {"id": "rabbit", "name": "White Rabbit", "ext": "gif", "desc": "Speed hopper companion from CoPet"},
+  {"id": "rat", "name": "Pearl Rat", "ext": "gif", "desc": "Tiny explorer companion from CoPet"},
+  {"id": "rooster", "name": "Golden Rooster", "ext": "gif", "desc": "Dawn caller companion from CoPet"},
+  {"id": "snake", "name": "Jade Snake", "ext": "gif", "desc": "Elegant serpent companion from CoPet"},
+  {"id": "tiger", "name": "Fierce Tiger", "ext": "gif", "desc": "Apex hunter companion from CoPet"}
+]
+
+def auto_set_codex():
+    print(f"🐾 Setting up Codex companions in: {CODEX_PETS_DIR}")
+    CODEX_PETS_DIR.mkdir(parents=True, exist_ok=True)
+    
+    installed = 0
+    for pet in PETS_DATA:
+        pet_id = pet["id"]
+        pet_target_dir = CODEX_PETS_DIR / pet_id
+        pet_target_dir.mkdir(parents=True, exist_ok=True)
+        
+        # 1. Check if upstream anime pet package folder exists
+        upstream_dir = TMP_ANIME_PETS_DIR / pet_id
+        if upstream_dir.exists():
+            for item in upstream_dir.iterdir():
+                shutil.copy(item, pet_target_dir / item.name)
+            installed += 1
+            continue
+
+        # 2. Copy from public/pets/
+        source_sprite = PUBLIC_PETS_DIR / f"{pet_id}.{pet['ext']}"
+        if source_sprite.exists():
+            dest_sprite_name = f"spritesheet.{pet['ext']}"
+            shutil.copy(source_sprite, pet_target_dir / dest_sprite_name)
+            
+            # Write pet.json
+            pet_json = {
+                "id": pet_id,
+                "displayName": pet["name"],
+                "description": pet["desc"],
+                "spritesheetPath": dest_sprite_name,
+                "lookDirections": ["center"]
+            }
+            with open(pet_target_dir / "pet.json", "w") as f:
+                json.dump(pet_json, f, indent=2)
+            installed += 1
+
+    print(f"✅ Successfully installed {installed} companions into ~/.codex/pets/")
+
+    # Setup Codex Hook forwarding if desired
+    hooks_file = CODEX_DIR / "hooks.json"
+    print(f"🔗 Checking Codex hook config in: {hooks_file}")
+    
+    existing_hooks = {}
+    if hooks_file.exists():
+        try:
+            with open(hooks_file, "r") as f:
+                existing_hooks = json.load(f)
+        except Exception:
+            existing_hooks = {}
+
+    # Add Nuzzle lifecycle notification hook
+    existing_hooks["nuzzle"] = {
+        "description": "Nuzzle Companion Studio Lifecycle Listener",
+        "url": "http://127.0.0.1:4173",
+        "events": ["prompt", "tool_use", "thinking", "completion", "error"]
+    }
+
+    with open(hooks_file, "w") as f:
+        json.dump(existing_hooks, f, indent=2)
+    print("✅ Configured ~/.codex/hooks.json for automatic agent event reaction!")
+
+if __name__ == "__main__":
+    auto_set_codex()

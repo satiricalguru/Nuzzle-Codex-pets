@@ -191,6 +191,16 @@ window.nuzzle.dispatchAgentEvent({
 
 The same payload can be sent with `window.dispatchEvent(new CustomEvent('nuzzle:agent-event', { detail: payload }))` or through `new BroadcastChannel('nuzzle-agent-events')`. The bridge updates the activity stream and companion state locally.
 
+### 4. Auto-Set All 42 Pets for Native Codex App
+
+Automatically install and configure all 42 anime & CoPet companions directly into your local Codex directory (`~/.codex/pets/`):
+
+```bash
+python3 setup_codex.py
+```
+
+This populates `~/.codex/pets/` with `pet.json` and sprite assets for all 42 companions and sets up `~/.codex/hooks.json` for lifecycle event streaming.
+
 ---
 
 ## 👥 Contributors & Project Credits
