@@ -404,6 +404,14 @@ body.no-noise .app-noise { opacity: 0; }
 }
 
 /* Sprite Atlas Keyframe Stepping Engine (8 columns, 9 rows) */
+@keyframes pet-frames-4 {
+  from { background-position-x: 0%; }
+  to { background-position-x: 42.857%; }
+}
+@keyframes pet-frames-6 {
+  from { background-position-x: 0%; }
+  to { background-position-x: 71.429%; }
+}
 @keyframes pet-frames-8 {
   from { background-position-x: 0%; }
   to { background-position-x: 100%; }
@@ -427,7 +435,7 @@ body.no-noise .app-noise { opacity: 0; }
   height: 220px;
   background-color: #f2ede5;
   background-repeat: no-repeat;
-  background-size: 800% 930%;
+  background-size: 800% 900%;
   border-radius: 45% 45% 39% 39%;
   box-shadow: 0 17px 28px rgba(77, 47, 30, .12);
   overflow: hidden;
@@ -435,7 +443,7 @@ body.no-noise .app-noise { opacity: 0; }
   transform: scale(var(--pet-scale));
   transform-origin: center bottom;
   transition: transform .2s ease, box-shadow .2s ease;
-  animation: pet-frames-8 1.2s steps(6) infinite, pet-float-gentle 3.6s ease-in-out infinite;
+  animation: pet-frames-6 1.2s steps(6) infinite, pet-float-gentle 3.6s ease-in-out infinite;
 }
 .pet-art:hover {
   box-shadow: 0 22px 34px rgba(77, 47, 30, .18);
@@ -451,20 +459,40 @@ body.no-noise .app-noise { opacity: 0; }
 /* Pet Animation States & Atlas Row Mappings */
 .pet-art.state-idle {
   background-position-y: 1.5%;
-  animation: pet-frames-8 1.2s steps(6) infinite, pet-float-gentle 3.6s ease-in-out infinite;
+  animation: pet-frames-6 1.2s steps(6) infinite, pet-float-gentle 3.6s ease-in-out infinite;
 }
 .pet-art.state-pat {
   background-position-y: 38.5%; /* Row 3: waving */
-  animation: pet-frames-8 0.7s steps(4) 3, pet-pat-bounce 0.6s cubic-bezier(.34, 1.56, .64, 1) 1;
+  animation: pet-frames-4 0.7s steps(4) 3, pet-pat-bounce 0.6s cubic-bezier(.34, 1.56, .64, 1) 1;
 }
 .pet-art.state-work {
   background-position-y: 88.5%; /* Row 7: running */
-  animation: pet-frames-8 0.75s steps(6) infinite, pet-float-gentle 2s ease-in-out infinite;
+  animation: pet-frames-6 0.75s steps(6) infinite, pet-float-gentle 2s ease-in-out infinite;
 }
 .pet-art.state-sleep {
   background-position-y: 75.5%; /* Row 6: waiting/rest */
-  animation: pet-frames-8 1.8s steps(6) infinite, pet-float-gentle 5s ease-in-out infinite;
+  animation: pet-frames-6 1.8s steps(6) infinite, pet-float-gentle 5s ease-in-out infinite;
 }
+.pet-art.state-failed {
+  background-position-y: 63.5%; /* Row 5: failed */
+  animation: pet-frames-8 1s steps(8) infinite, pet-float-gentle 2.4s ease-in-out infinite;
+}
+.pet-art.state-review {
+  background-position-y: 100%; /* Row 8: review */
+  animation: pet-frames-6 1s steps(6) infinite, pet-float-gentle 3s ease-in-out infinite;
+}
+
+/* GIF-format pet overrides (CoPet animals) — GIFs auto-animate */
+.pet-art.gif-pet,
+.pet-tile-art.gif-pet,
+.library-art.gif-pet {
+  background-size: contain !important;
+  background-position: center center !important;
+  animation: pet-float-gentle 3.6s ease-in-out infinite !important;
+}
+.pet-art.gif-pet.state-pat { animation: pet-pat-bounce 0.6s cubic-bezier(.34, 1.56, .64, 1) 1, pet-float-gentle 3.6s ease-in-out infinite !important; }
+.pet-tile:hover .pet-tile-art.gif-pet { animation: pet-float-gentle 2s ease-in-out infinite !important; }
+.library-card:hover .library-art.gif-pet { animation: pet-float-gentle 2s ease-in-out infinite !important; }
 
 /* Particle / Heart Burst Container */
 .pet-particles {
@@ -750,7 +778,7 @@ body.no-noise .app-noise { opacity: 0; }
   transition: background-position .2s ease;
 }
 .pet-tile:hover .pet-tile-art {
-  animation: pet-frames-8 1s steps(6) infinite;
+  animation: pet-frames-6 1s steps(6) infinite;
 }
 .pet-tile-copy { flex: 1; min-width: 0; }
 .pet-tile-copy strong, .pet-tile-copy small { display: block; }
@@ -875,13 +903,13 @@ body.no-noise .app-noise { opacity: 0; }
   border-radius: 8px;
   background: #f0eae2;
   background-repeat: no-repeat;
-  background-size: 800% 980%;
+  background-size: 800% 900%;
   background-position: 0 1.2%;
   cursor: pointer;
   transition: background-position .2s ease;
 }
 .library-card:hover .library-art {
-  animation: pet-frames-8 1s steps(6) infinite;
+  animation: pet-frames-6 1s steps(6) infinite;
 }
 .library-card:nth-child(2n) .library-art { background-color: #ede9ef; }
 .library-info {
@@ -1334,4 +1362,20 @@ body.no-noise .app-noise { opacity: 0; }
   .agent-grid { grid-template-columns: 1fr; }
   .settings-layout { grid-template-columns: 1fr; }
   .library-grid { grid-template-columns: repeat(2, 1fr); }
+  .hero-intro { align-items: flex-start; flex-wrap: wrap; }
+  .hero-intro .primary-button { width: 100%; justify-content: center; }
+  .pet-stage-content { height: auto; min-height: 305px; flex-direction: column; justify-content: center; padding: 26px 18px 64px; text-align: center; }
+  .pet-copy { width: 100%; padding-top: 0; }
+  .pet-meta, .pet-actions { justify-content: center; flex-wrap: wrap; }
+}
+
+@media (max-width: 600px) {
+  .main-canvas { padding-left: 16px; padding-right: 16px; }
+  .topbar-actions { gap: 8px; }
+  .status-pill { width: 32px; padding: 9px; font-size: 0; justify-content: center; }
+  .pet-strip, .library-grid { grid-template-columns: 1fr; }
+  .page-intro { align-items: flex-start; flex-direction: column; gap: 20px; }
+  .toolbar { align-items: stretch; flex-direction: column; gap: 14px; }
+  .search-field { width: 100%; }
+  .filter-group { flex-wrap: wrap; }
 }

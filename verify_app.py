@@ -59,7 +59,7 @@ try:
         print("Testing Pet Library...")
         page.get_by_role("button", name="Pet library").click()
         assert page.locator("#library-view").is_visible()
-        assert page.locator("#library-grid .library-card").count() == 8
+        assert page.locator("#library-grid .library-card").count() == 42
 
         page.locator("#pet-search").fill("Klee")
         assert page.locator("#library-grid .library-card").count() == 1
@@ -100,6 +100,21 @@ try:
         assert page.locator(".palette-item").count() >= 1
         page.keyboard.press("Escape")
         assert page.locator("#command-palette.open").count() == 0
+
+        # 9. Local event bridge verification
+        print("Testing local agent event bridge...")
+        page.evaluate("window.nuzzle.dispatchAgentEvent({type: 'error', agent: 'Codex', title: 'Codex failed a test', sub: 'run_command · exit 1'})")
+        assert "Codex failed a test" in page.locator("#activity-list .activity-item").first.inner_text()
+        assert "state-failed" in page.locator("#hero-pet-art").get_attribute("class")
+
+        # 10. Narrow viewport layout verification
+        mobile = browser.new_page(viewport={"width": 390, "height": 844}, device_scale_factor=1)
+        mobile.goto(f"http://127.0.0.1:{PORT}", wait_until="networkidle")
+        assert mobile.evaluate("document.documentElement.scrollWidth <= document.documentElement.clientWidth")
+        mobile.locator("button[data-view='library']").click()
+        mobile.locator("#pet-search").fill("Anya")
+        assert mobile.locator("#library-grid .library-card").count() == 1
+        mobile.close()
 
         # Capture visual verification artifact
         screenshot_path = "/tmp/nuzzle-verify.png"

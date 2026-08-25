@@ -5,10 +5,12 @@
 
 // 1. DATA MODELS & CATALOG
 const PETS = [
+  // ── Original Nuzzle Pets (PNG sprite atlases) ──────────────────────
   {
     id: 'hu-tao',
     name: 'Hu Tao',
     file: 'hu-tao',
+    ext: 'png',
     vibe: 'chaos',
     element: 'pyro',
     note: 'spirited · pyro',
@@ -20,6 +22,7 @@ const PETS = [
     id: 'furina',
     name: 'Furina',
     file: 'furina',
+    ext: 'png',
     vibe: 'anime',
     element: 'hydro',
     note: 'dramatic · hydro',
@@ -31,6 +34,7 @@ const PETS = [
     id: 'raiden',
     name: 'Raiden',
     file: 'raiden',
+    ext: 'png',
     vibe: 'cozy',
     element: 'electro',
     note: 'focused · electro',
@@ -42,6 +46,7 @@ const PETS = [
     id: 'ganyu',
     name: 'Ganyu',
     file: 'ganyu',
+    ext: 'png',
     vibe: 'cozy',
     element: 'cryo',
     note: 'sleepy · cryo',
@@ -53,6 +58,7 @@ const PETS = [
     id: 'klee',
     name: 'Klee',
     file: 'klee',
+    ext: 'png',
     vibe: 'chaos',
     element: 'pyro',
     note: 'tiny · explosive',
@@ -64,6 +70,7 @@ const PETS = [
     id: 'anya',
     name: 'Anya',
     file: 'anya',
+    ext: 'png',
     vibe: 'anime',
     element: 'esper',
     note: 'telepathic · pink',
@@ -75,6 +82,7 @@ const PETS = [
     id: 'aiko',
     name: 'Aiko',
     file: 'aiko',
+    ext: 'png',
     vibe: 'anime',
     element: 'anemo',
     note: 'bright · curious',
@@ -86,11 +94,424 @@ const PETS = [
     id: 'ayaka',
     name: 'Ayaka',
     file: 'ayaka',
+    ext: 'png',
     vibe: 'cozy',
     element: 'cryo',
     note: 'elegant · cryo',
     quote: '“May your compilation be swift and graceful.”',
     badge: 'calm precision',
+    favorite: false
+  },
+
+  // ── codex-anime-pets (WebP sprite atlases) ─────────────────────────
+  {
+    id: 'baobao',
+    name: 'Baobao',
+    file: 'baobao',
+    ext: 'webp',
+    vibe: 'anime',
+    element: 'spirit',
+    note: 'mystic · spirit',
+    quote: '“Inner strength flows through every keystroke.”',
+    badge: 'spirit fighter',
+    favorite: false
+  },
+  {
+    id: 'chen',
+    name: 'Chen',
+    file: 'chen',
+    ext: 'webp',
+    vibe: 'chaos',
+    element: 'blade',
+    note: 'sharp · decisive',
+    quote: '“Unsheathe the code. Strike clean.”',
+    badge: 'sword operator',
+    favorite: false
+  },
+  {
+    id: 'conan',
+    name: 'Conan',
+    file: 'conan',
+    ext: 'webp',
+    vibe: 'cozy',
+    element: 'logic',
+    note: 'detective · keen',
+    quote: '“There is always only one truth in this stack trace.”',
+    badge: 'boy detective',
+    favorite: false
+  },
+  {
+    id: 'kid',
+    name: 'Kid',
+    file: 'kid',
+    ext: 'webp',
+    vibe: 'chaos',
+    element: 'illusion',
+    note: 'magician · dashing',
+    quote: '“Under the moonlight, I shall refactor this gem.”',
+    badge: 'phantom thief',
+    favorite: false
+  },
+  {
+    id: 'lappland',
+    name: 'Lappland',
+    file: 'lappland',
+    ext: 'webp',
+    vibe: 'chaos',
+    element: 'blade',
+    note: 'wild · swordswoman',
+    quote: '“Silence the warnings, all of them.”',
+    badge: 'lone wolf',
+    favorite: false
+  },
+  {
+    id: 'march-7th',
+    name: 'March 7th',
+    file: 'march-7th',
+    ext: 'webp',
+    vibe: 'anime',
+    element: 'cryo',
+    note: 'cheerful · cryo',
+    quote: '“Smile! I\'m screenshotting this deployment!”',
+    badge: 'photo lover',
+    favorite: false
+  },
+  {
+    id: 'new-covenant-exusiai',
+    name: 'Exusiai',
+    file: 'new-covenant-exusiai',
+    ext: 'webp',
+    vibe: 'chaos',
+    element: 'light',
+    note: 'angelic · gunner',
+    quote: '“Apple pie and rapid-fire commits!”',
+    badge: 'angel marksman',
+    favorite: false
+  },
+  {
+    id: 'phoebe',
+    name: 'Phoebe',
+    file: 'phoebe',
+    ext: 'webp',
+    vibe: 'cozy',
+    element: 'anemo',
+    note: 'gentle · acolyte',
+    quote: '“May the winds guide your merge conflicts.”',
+    badge: 'serene cleric',
+    favorite: false
+  },
+  {
+    id: 'regulus-star-antimony',
+    name: 'Regulus',
+    file: 'regulus-star-antimony',
+    ext: 'webp',
+    vibe: 'chaos',
+    element: 'electro',
+    note: 'radio · arcanist',
+    quote: '“Broadcasting on all frequencies — ship it!”',
+    badge: 'radio DJ',
+    favorite: false
+  },
+  {
+    id: 'shinchan',
+    name: 'Shinchan',
+    file: 'shinchan',
+    ext: 'webp',
+    vibe: 'chaos',
+    element: 'mischief',
+    note: 'cheeky · unstoppable',
+    quote: '“Action Mask says: never skip code review!”',
+    badge: 'crayon chaos',
+    favorite: false
+  },
+  {
+    id: 'sonetto',
+    name: 'Sonetto',
+    file: 'sonetto',
+    ext: 'webp',
+    vibe: 'cozy',
+    element: 'light',
+    note: 'dutiful · composed',
+    quote: '“Following protocol, one commit at a time.”',
+    badge: 'field agent',
+    favorite: false
+  },
+  {
+    id: 'vertin',
+    name: 'Vertin',
+    file: 'vertin',
+    ext: 'webp',
+    vibe: 'cozy',
+    element: 'chrono',
+    note: 'timeless · wise',
+    quote: '“Time flows, but this branch stays.”',
+    badge: 'timekeeper',
+    favorite: false
+  },
+  {
+    id: 'yoimiya',
+    name: 'Yoimiya',
+    file: 'yoimiya',
+    ext: 'webp',
+    vibe: 'anime',
+    element: 'pyro',
+    note: 'fireworks · bright',
+    quote: '“Let\'s light up the night with a clean build!”',
+    badge: 'firework queen',
+    favorite: false
+  },
+  {
+    id: 'zani',
+    name: 'Zani',
+    file: 'zani',
+    ext: 'webp',
+    vibe: 'anime',
+    element: 'electro',
+    note: 'horned · intense',
+    quote: '“Power surge — the pipeline is live.”',
+    badge: 'dark spark',
+    favorite: false
+  },
+
+  // ── CoPet Pets (GIF animations) ────────────────────────────────────
+  {
+    id: 'copet-neo',
+    name: 'CoPet Neo',
+    file: 'copet-neo',
+    ext: 'gif',
+    vibe: 'anime',
+    element: 'digital',
+    note: 'original · mascot',
+    quote: '“I\'m the OG coding companion.”',
+    badge: 'CoPet classic',
+    favorite: false
+  },
+  {
+    id: 'copet-nia',
+    name: 'CoPet Nia',
+    file: 'copet-nia',
+    ext: 'gif',
+    vibe: 'cozy',
+    element: 'digital',
+    note: 'sweet · soft',
+    quote: '“Everything will compile just fine, I promise.”',
+    badge: 'gentle soul',
+    favorite: false
+  },
+  {
+    id: 'copet-mecha',
+    name: 'CoPet Mecha',
+    file: 'copet-mecha',
+    ext: 'gif',
+    vibe: 'chaos',
+    element: 'mecha',
+    note: 'armored · fierce',
+    quote: '“Initiating build sequence. Full power.”',
+    badge: 'mech warrior',
+    favorite: false
+  },
+  {
+    id: 'dj-fuzz',
+    name: 'DJ Fuzz',
+    file: 'dj-fuzz',
+    ext: 'gif',
+    vibe: 'chaos',
+    element: 'music',
+    note: 'beats · funky',
+    quote: '“Drop the bass... and the database migration.”',
+    badge: 'party starter',
+    favorite: false
+  },
+  {
+    id: 'dog',
+    name: 'Lucky Dog',
+    file: 'dog',
+    ext: 'gif',
+    vibe: 'cozy',
+    element: 'earth',
+    note: 'loyal · warm',
+    quote: '“Fetching your results... good boy style!”',
+    badge: 'best friend',
+    favorite: false
+  },
+  {
+    id: 'dragon',
+    name: 'Azure Dragon',
+    file: 'dragon',
+    ext: 'gif',
+    vibe: 'chaos',
+    element: 'pyro',
+    note: 'ancient · majestic',
+    quote: '“Breathe fire into that CI pipeline.”',
+    badge: 'mythic beast',
+    favorite: false
+  },
+  {
+    id: 'duck',
+    name: 'Waddly Duck',
+    file: 'duck',
+    ext: 'gif',
+    vibe: 'cozy',
+    element: 'hydro',
+    note: 'rubber · quacky',
+    quote: '“Rubber duck debugging, at your service.”',
+    badge: 'debug buddy',
+    favorite: false
+  },
+  {
+    id: 'goat',
+    name: 'Cloud Goat',
+    file: 'goat',
+    ext: 'gif',
+    vibe: 'cozy',
+    element: 'earth',
+    note: 'fluffy · stubborn',
+    quote: '“I eat bugs for breakfast. Literally.”',
+    badge: 'mountain dweller',
+    favorite: false
+  },
+  {
+    id: 'goku',
+    name: 'Goku',
+    file: 'goku',
+    ext: 'gif',
+    vibe: 'chaos',
+    element: 'spirit',
+    note: 'legendary · powerful',
+    quote: '“Kamehameha! Deploying to production!”',
+    badge: 'super saiyan',
+    favorite: false
+  },
+  {
+    id: 'horse',
+    name: 'Chestnut Horse',
+    file: 'horse',
+    ext: 'gif',
+    vibe: 'cozy',
+    element: 'earth',
+    note: 'galloping · swift',
+    quote: '“Racing through your backlog at full gallop.”',
+    badge: 'swift runner',
+    favorite: false
+  },
+  {
+    id: 'monkey',
+    name: 'Clever Monkey',
+    file: 'monkey',
+    ext: 'gif',
+    vibe: 'chaos',
+    element: 'spirit',
+    note: 'cheeky · clever',
+    quote: '“Who said monkey-patching is bad practice?”',
+    badge: 'code trickster',
+    favorite: false
+  },
+  {
+    id: 'orange-cat',
+    name: 'Orange Cat',
+    file: 'orange-cat',
+    ext: 'gif',
+    vibe: 'cozy',
+    element: 'anemo',
+    note: 'lazy · purring',
+    quote: '“I\'ll review this PR after my nap... maybe.”',
+    badge: 'keyboard napper',
+    favorite: false
+  },
+  {
+    id: 'ox',
+    name: 'Cream Ox',
+    file: 'ox',
+    ext: 'gif',
+    vibe: 'cozy',
+    element: 'earth',
+    note: 'sturdy · reliable',
+    quote: '“Steady progress. No shortcuts.”',
+    badge: 'workhorse',
+    favorite: false
+  },
+  {
+    id: 'panda',
+    name: 'Panda',
+    file: 'panda',
+    ext: 'gif',
+    vibe: 'cozy',
+    element: 'earth',
+    note: 'cuddly · zen',
+    quote: '“Bamboo break, then back to coding.”',
+    badge: 'zen coder',
+    favorite: false
+  },
+  {
+    id: 'pig',
+    name: 'Blush Pig',
+    file: 'pig',
+    ext: 'gif',
+    vibe: 'cozy',
+    element: 'earth',
+    note: 'round · happy',
+    quote: '“Oink! That test passed on the first try!”',
+    badge: 'happy trotter',
+    favorite: false
+  },
+  {
+    id: 'rabbit',
+    name: 'White Rabbit',
+    file: 'rabbit',
+    ext: 'gif',
+    vibe: 'cozy',
+    element: 'cryo',
+    note: 'fluffy · quick',
+    quote: '“Hop hop! Let me jump through these tests.”',
+    badge: 'speed hopper',
+    favorite: false
+  },
+  {
+    id: 'rat',
+    name: 'Pearl Rat',
+    file: 'rat',
+    ext: 'gif',
+    vibe: 'cozy',
+    element: 'earth',
+    note: 'clever · small',
+    quote: '“Small but mighty. Watch me find that bug.”',
+    badge: 'tiny explorer',
+    favorite: false
+  },
+  {
+    id: 'rooster',
+    name: 'Golden Rooster',
+    file: 'rooster',
+    ext: 'gif',
+    vibe: 'chaos',
+    element: 'pyro',
+    note: 'bold · loud',
+    quote: '“Cock-a-doodle-DEPLOY!”',
+    badge: 'dawn caller',
+    favorite: false
+  },
+  {
+    id: 'snake',
+    name: 'Jade Snake',
+    file: 'snake',
+    ext: 'gif',
+    vibe: 'anime',
+    element: 'cryo',
+    note: 'sly · elegant',
+    quote: '“Ssslithering through your Python code.”',
+    badge: 'code serpent',
+    favorite: false
+  },
+  {
+    id: 'tiger',
+    name: 'Fierce Tiger',
+    file: 'tiger',
+    ext: 'gif',
+    vibe: 'chaos',
+    element: 'pyro',
+    note: 'powerful · striped',
+    quote: '“Pouncing on regressions with ferocity.”',
+    badge: 'apex hunter',
     favorite: false
   }
 ];
@@ -200,8 +621,14 @@ function playChime(type = 'pat') {
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 
-function artStyle(file) {
-  return `background-image:url('/pets/${file}.png')`;
+function petUrl(pet) {
+  const ext = (typeof pet === 'object' ? pet.ext : 'png') || 'png';
+  const file = typeof pet === 'object' ? pet.file : pet;
+  return `/pets/${file}.${ext}`;
+}
+
+function artStyle(petOrFile) {
+  return `background-image:url('${petUrl(petOrFile)}')`;
 }
 
 // 5. PET SPRITE ANIMATION & INTERACTION ENGINE
@@ -213,13 +640,17 @@ function setPetState(newState, durationMs = 2000) {
   if (!heroArt) return;
 
   state.activePetState = newState;
-  heroArt.className = `pet-art state-${newState}`;
+  const activePet = PETS.find(p => p.id === state.selectedPetId) || PETS[0];
+  const gifClass = activePet.ext === 'gif' ? ' gif-pet' : '';
+  heroArt.className = `pet-art state-${newState}${gifClass}`;
   if (stateTag) stateTag.textContent = `${newState} state`;
 
   if (petStateTimeout) clearTimeout(petStateTimeout);
   if (newState !== 'idle') {
     petStateTimeout = setTimeout(() => {
-      heroArt.className = 'pet-art state-idle';
+      const activePet2 = PETS.find(p => p.id === state.selectedPetId) || PETS[0];
+      const gifClass2 = activePet2.ext === 'gif' ? ' gif-pet' : '';
+      heroArt.className = `pet-art state-idle${gifClass2}`;
       state.activePetState = 'idle';
       if (stateTag) stateTag.textContent = 'idle state';
     }, durationMs);
@@ -303,8 +734,9 @@ function renderFeaturedPet() {
   const heroVibe = $('#hero-pet-vibe');
 
   if (heroArt) {
-    heroArt.style.backgroundImage = `url('/pets/${pet.file}.png')`;
+    heroArt.style.backgroundImage = `url('${petUrl(pet)}')`;
     heroArt.setAttribute('aria-label', `${pet.name} companion sprite`);
+    heroArt.classList.toggle('gif-pet', pet.ext === 'gif');
   }
   if (heroName) heroName.textContent = pet.name;
   if (heroQuote) heroQuote.textContent = pet.quote;
@@ -325,7 +757,7 @@ function renderPetStrip() {
     const isFav = state.favorites.has(pet.id);
     return `
       <div class="pet-tile ${isSelected ? 'selected' : ''}" data-pet-id="${pet.id}" role="listitem" tabindex="0">
-        <div class="pet-tile-art" style="${artStyle(pet.file)}"></div>
+        <div class="pet-tile-art${pet.ext === 'gif' ? ' gif-pet' : ''}" style="${artStyle(pet)}"></div>
         <div class="pet-tile-copy">
           <strong>${pet.name}</strong>
           <small>${pet.note}</small>
@@ -360,7 +792,7 @@ function renderLibrary(filter = 'all', search = '') {
     const isFav = state.favorites.has(pet.id);
     return `
       <article class="library-card ${isActive ? 'is-active-companion' : ''}" data-pet-id="${pet.id}">
-        <div class="library-art" style="${artStyle(pet.file)}" data-action="select-companion" data-pet-id="${pet.id}" title="Click to make ${pet.name} your companion"></div>
+        <div class="library-art${pet.ext === 'gif' ? ' gif-pet' : ''}" style="${artStyle(pet)}" data-action="select-companion" data-pet-id="${pet.id}" title="Click to make ${pet.name} your companion"></div>
         <div class="library-info">
           <div>
             <strong>${pet.name}</strong>
@@ -414,14 +846,21 @@ function renderActivity() {
   const list = $('#activity-list');
   if (!list) return;
 
+  const escapeHtml = value => String(value ?? '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+
   list.innerHTML = state.activity.map(item => `
     <div class="activity-item">
-      <div class="activity-icon ${item.type}">${item.icon}</div>
+      <div class="activity-icon ${escapeHtml(item.type)}">${escapeHtml(item.icon)}</div>
       <div class="activity-copy">
-        <strong>${item.title}</strong>
-        <small>${item.sub}</small>
+        <strong>${escapeHtml(item.title)}</strong>
+        <small>${escapeHtml(item.sub)}</small>
       </div>
-      <span class="activity-time">${item.time}</span>
+      <span class="activity-time">${escapeHtml(item.time)}</span>
     </div>
   `).join('');
 }
@@ -434,12 +873,7 @@ const PALETTE_ACTIONS = [
   { id: 'view-settings', category: 'Navigation', title: 'Open Settings & Preferences', icon: '◌', shortcut: '4', action: () => setView('settings') },
   { id: 'act-pat', category: 'Pet Actions', title: 'Pet Active Companion', icon: '♡', action: () => patActivePet() },
   { id: 'act-sim', category: 'Agent Actions', title: 'Simulate Agent Tool Call', icon: '⚡︎', action: () => simulateAgentEvent() },
-  { id: 'pet-hu-tao', category: 'Switch Companion', title: 'Switch Companion to Hu Tao', icon: '✦', action: () => selectCompanion('hu-tao') },
-  { id: 'pet-furina', category: 'Switch Companion', title: 'Switch Companion to Furina', icon: '✦', action: () => selectCompanion('furina') },
-  { id: 'pet-ganyu', category: 'Switch Companion', title: 'Switch Companion to Ganyu', icon: '✦', action: () => selectCompanion('ganyu') },
-  { id: 'pet-klee', category: 'Switch Companion', title: 'Switch Companion to Klee', icon: '✦', action: () => selectCompanion('klee') },
-  { id: 'pet-raiden', category: 'Switch Companion', title: 'Switch Companion to Raiden', icon: '✦', action: () => selectCompanion('raiden') },
-  { id: 'pet-anya', category: 'Switch Companion', title: 'Switch Companion to Anya', icon: '✦', action: () => selectCompanion('anya') }
+  ...PETS.map(p => ({ id: `pet-${p.id}`, category: 'Switch Companion', title: `Switch Companion to ${p.name}`, icon: '✦', action: () => selectCompanion(p.id) }))
 ];
 
 function renderCommandPalette(query = '') {
@@ -561,14 +995,76 @@ const SIM_ACTIVITIES = [
   { icon: '✧', type: 'done', title: 'Gemini synthesized documentation', sub: 'multimodal · index.md', time: 'just now' }
 ];
 
-function simulateAgentEvent() {
-  const item = SIM_ACTIVITIES[Math.floor(Math.random() * SIM_ACTIVITIES.length)];
+const AGENT_EVENT_STATES = {
+  prompt: { activityType: 'working', petState: 'work', icon: '✦', label: 'received a prompt' },
+  tool: { activityType: 'working', petState: 'work', icon: '✦', label: 'is running a tool' },
+  tool_call: { activityType: 'working', petState: 'work', icon: '✦', label: 'is running a tool' },
+  working: { activityType: 'working', petState: 'work', icon: '✦', label: 'is working' },
+  running: { activityType: 'working', petState: 'work', icon: '✦', label: 'is working' },
+  waiting: { activityType: 'wait', petState: 'sleep', icon: '◌', label: 'is waiting' },
+  wait: { activityType: 'wait', petState: 'sleep', icon: '◌', label: 'is waiting' },
+  thinking: { activityType: 'wait', petState: 'sleep', icon: '◌', label: 'is thinking' },
+  complete: { activityType: 'done', petState: 'idle', icon: '✓', label: 'completed a task' },
+  completed: { activityType: 'done', petState: 'idle', icon: '✓', label: 'completed a task' },
+  done: { activityType: 'done', petState: 'idle', icon: '✓', label: 'completed a task' },
+  success: { activityType: 'done', petState: 'idle', icon: '✓', label: 'completed a task' },
+  review: { activityType: 'done', petState: 'review', icon: '✓', label: 'finished a review' },
+  error: { activityType: 'error', petState: 'failed', icon: '!', label: 'encountered an error' },
+  failed: { activityType: 'error', petState: 'failed', icon: '!', label: 'encountered an error' },
+  failure: { activityType: 'error', petState: 'failed', icon: '!', label: 'encountered an error' }
+};
+
+function normalizeAgentEvent(payload = {}) {
+  const rawType = String(payload.type || payload.event || payload.kind || 'working')
+    .trim().toLowerCase().replaceAll('-', '_').replaceAll(' ', '_');
+  const config = AGENT_EVENT_STATES[rawType] || AGENT_EVENT_STATES.working;
+  const agent = String(payload.agentName || payload.agent || 'Agent').trim().slice(0, 80);
+  const title = String(payload.title || `${agent} ${config.label}`).trim().slice(0, 160);
+  const sub = String(payload.sub || payload.detail || payload.tool || rawType).trim().slice(0, 160);
+
+  return {
+    icon: String(payload.icon || config.icon).slice(0, 4),
+    type: config.activityType,
+    title,
+    sub,
+    time: String(payload.time || 'just now').slice(0, 40),
+    petState: config.petState,
+    durationMs: Number.isFinite(payload.durationMs) ? Math.max(500, Math.min(payload.durationMs, 10000)) : 2400
+  };
+}
+
+function dispatchAgentEvent(payload = {}, { toast = true } = {}) {
+  const item = normalizeAgentEvent(payload);
   state.activity.unshift(item);
   if (state.activity.length > 10) state.activity.pop();
   renderActivity();
-  setPetState('work', 1800);
+  setPetState(item.petState, item.durationMs);
   playChime('pop');
-  showToast(`${item.title}`);
+  if (toast) showToast(item.title);
+  return item;
+}
+
+function simulateAgentEvent() {
+  const item = SIM_ACTIVITIES[Math.floor(Math.random() * SIM_ACTIVITIES.length)];
+  dispatchAgentEvent({
+    type: item.type === 'done' ? 'complete' : 'tool',
+    icon: item.icon,
+    title: item.title,
+    sub: item.sub,
+    time: item.time
+  });
+}
+
+window.nuzzle = window.nuzzle || {};
+window.nuzzle.dispatchAgentEvent = dispatchAgentEvent;
+window.addEventListener('nuzzle:agent-event', event => dispatchAgentEvent(event.detail || {}));
+window.addEventListener('message', event => {
+  if (event.source !== window || event.data?.source !== 'nuzzle-agent') return;
+  dispatchAgentEvent(event.data.event || event.data);
+});
+if ('BroadcastChannel' in window) {
+  const agentEventChannel = new BroadcastChannel('nuzzle-agent-events');
+  agentEventChannel.addEventListener('message', event => dispatchAgentEvent(event.data || {}));
 }
 
 // 13. DATE/TIME TICKER

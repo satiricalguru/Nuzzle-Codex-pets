@@ -11,6 +11,7 @@
 
   <p>
     <a href="https://github.com/satiricalguru/Nuzzle-Codex-pets/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-coral?style=for-the-badge&color=ef7861" alt="MIT License" /></a>
+    <img src="https://img.shields.io/badge/Pets-42%20Available-orange?style=for-the-badge&color=e58c42" alt="42 Pets Available" />
     <img src="https://img.shields.io/badge/Local--First-100%25-green?style=for-the-badge&color=66a76e" alt="Local First" />
     <img src="https://img.shields.io/badge/Dependencies-0%20Runtime-yellow?style=for-the-badge&color=e7bc55" alt="Zero Dependencies" />
     <img src="https://img.shields.io/badge/Agents-8%20Supported-purple?style=for-the-badge&color=9e624d" alt="8 Agents Supported" />
@@ -174,6 +175,21 @@ Run the automated Playwright test suite to verify UI rendering, animation states
 ```bash
 python3 verify_app.py
 ```
+
+### 3. Local Agent Event Bridge
+
+The browser UI exposes a local event seam for Codex, Antigravity, or another hook adapter to forward lifecycle events without a cloud service:
+
+```js
+window.nuzzle.dispatchAgentEvent({
+  type: 'tool', // prompt, tool, waiting, complete, review, or error
+  agent: 'Codex',
+  title: 'Codex is running tests',
+  sub: 'tool call · run_command'
+});
+```
+
+The same payload can be sent with `window.dispatchEvent(new CustomEvent('nuzzle:agent-event', { detail: payload }))` or through `new BroadcastChannel('nuzzle-agent-events')`. The bridge updates the activity stream and companion state locally.
 
 ---
 
