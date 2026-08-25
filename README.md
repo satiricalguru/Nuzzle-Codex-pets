@@ -33,19 +33,19 @@
 
 ---
 
-## 🎬 Showcase & Previews
+## 🎬 Showcase & Live Animations
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/ChanceYu/CoPet/main/public/banner.png" alt="CoPet Desktop Companion Banner" width="800" style="max-width: 100%; border-radius: 12px; margin-bottom: 12px;" />
+  <img src="assets/nuzzle-hero-animated.gif" alt="Nuzzle Animated Companions Hero" width="840" style="max-width: 100%; border-radius: 14px; margin-bottom: 16px;" />
 </div>
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/chenxin-dlut/codex-anime-pets/main/assets/animations/codex-anime-pets-showcase.gif" alt="Animated Showcase of Anime Pets" width="520" style="max-width: 90%; border-radius: 10px; margin: 8px 0;" />
-</p>
+<div align="center">
+  <img src="assets/nuzzle-actions-animated.gif" alt="Nuzzle Live Animation & Lifecycle States" width="840" style="max-width: 100%; border-radius: 14px; margin-bottom: 16px;" />
+</div>
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/chenxin-dlut/codex-anime-pets/main/assets/gallery/codex-anime-pets-gallery.jpg" alt="Codex Anime Pets Gallery Poster" width="800" style="max-width: 100%; border-radius: 10px;" />
-</p>
+<div align="center">
+  <img src="assets/nuzzle-catalog-poster.png" alt="Nuzzle 42 Companions Catalog Poster" width="840" style="max-width: 100%; border-radius: 14px;" />
+</div>
 
 ---
 
